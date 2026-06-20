@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.11 - 2026-06-20
+
+### Added
+
+- Remember collapsed and expanded tree branches per document.
+
 ## 1.0.10 - 2026-06-20
 
 ### Changed

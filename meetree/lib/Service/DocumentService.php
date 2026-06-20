@@ -282,6 +282,9 @@ class DocumentService {
         $document['version'] = 1;
         $document['source'] = $document['source'] ?? ['format' => 'json', 'filename' => self::DOCUMENT_FILE];
         $document['activeFile'] = $document['activeFile'] ?? ['path' => $this->defaultDocumentPath(), 'format' => 'json'];
+        $document['uiState'] = isset($document['uiState']) && is_array($document['uiState']) ? $document['uiState'] : [];
+        $collapsedIds = isset($document['uiState']['collapsedIds']) && is_array($document['uiState']['collapsedIds']) ? $document['uiState']['collapsedIds'] : [];
+        $document['uiState']['collapsedIds'] = array_values(array_map(static fn ($id): string => (string)$id, array_filter($collapsedIds, static fn ($id): bool => is_scalar($id))));
         return $document;
     }
 

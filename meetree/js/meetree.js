@@ -138,6 +138,17 @@
         (node.children || []).forEach(child => collapseSubtree(child));
     }
 
+    function loadCollapsedState() {
+        collapsedIds.clear();
+        const ids = documentData && documentData.uiState && Array.isArray(documentData.uiState.collapsedIds) ? documentData.uiState.collapsedIds : [];
+        ids.forEach(id => collapsedIds.add(String(id)));
+    }
+
+    function saveCollapsedState() {
+        documentData.uiState = documentData.uiState || {};
+        documentData.uiState.collapsedIds = Array.from(collapsedIds);
+    }
+
     function clone(value) {
         return JSON.parse(JSON.stringify(value));
     }
@@ -163,6 +174,7 @@
         documentData.root = previous.root;
         collapsedIds.clear();
         previous.collapsedIds.forEach(id => collapsedIds.add(id));
+        saveCollapsedState();
         selectedId = findNode(previous.selectedId) ? previous.selectedId : documentData.root.id;
         selectNode(selectedId, false);
         markDirty(true);
@@ -269,6 +281,7 @@
                 targetInfo.node.children = targetInfo.node.children || [];
                 targetInfo.node.children.unshift(movingNode);
                 collapsedIds.delete(targetInfo.node.id);
+                saveCollapsedState();
             } else {
                 const refreshedTarget = nodeInfo(targetId);
                 const targetSiblings = refreshedTarget.parent.children;
@@ -354,6 +367,8 @@
                     } else {
                         collapseSubtree(node);
                     }
+                    saveCollapsedState();
+                    markDirty(true);
                     renderTree();
                 });
                 row.appendChild(toggle);
@@ -402,6 +417,7 @@
         documentData = await response.json();
         undoStack.length = 0;
         selectedId = null;
+        loadCollapsedState();
         updateExportFormatDefault();
         selectNode(documentData.root.id, false);
         setStatus(`Loaded ${activeFilePath() || 'MeeTree/tree.meetree.json'}`);
@@ -532,7 +548,7 @@
         documentData = await response.json();
         undoStack.length = 0;
         selectedId = null;
-        collapsedIds.clear();
+        loadCollapsedState();
         updateExportFormatDefault();
         selectNode(documentData.root.id, false);
         isDirty = false;
@@ -604,7 +620,7 @@
         documentData = await response.json();
         undoStack.length = 0;
         selectedId = null;
-        collapsedIds.clear();
+        loadCollapsedState();
         updateExportFormatDefault();
         selectNode(documentData.root.id, false);
         isDirty = false;
