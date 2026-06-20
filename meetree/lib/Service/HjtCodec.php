@@ -28,6 +28,7 @@ class HjtCodec {
             'children' => [],
         ];
         $stack = [];
+        $baseDepth = null;
         while ($index < count($lines)) {
             while ($index < count($lines) && trim((string)$lines[$index]) === '') {
                 $index++;
@@ -50,6 +51,12 @@ class HjtCodec {
                 $depthLine = (string)$lines[++$index];
             }
             $depth = (int)$depthLine;
+            $baseDepth ??= $depth;
+            $depth -= $baseDepth;
+            if ($depth < 0) {
+                $baseDepth += $depth;
+                $depth = 0;
+            }
             $index++;
 
             $content = [];

@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 0.1.9 - 2026-06-20
+
+### Fixed
+
+- Recognize JSON files that store a list of nodes and show all entries instead of wrapping the list as one node.
+- Handle HJT files whose top-level depth starts above zero.
+
 ## 0.1.8 - 2026-06-20
 
 ### Fixed

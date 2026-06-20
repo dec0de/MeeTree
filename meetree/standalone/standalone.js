@@ -65,10 +65,41 @@
             return emptyDocument();
         }
         try {
-            return JSON.parse(stored);
+            return normaliseDocument(JSON.parse(stored));
         } catch (error) {
             return emptyDocument();
         }
+    }
+
+    function normaliseDocument(document) {
+        if (Array.isArray(document)) {
+            document = { root: syntheticRoot('JSON document', document) };
+        } else if (document && Array.isArray(document.root)) {
+            document.root = syntheticRoot('JSON document', document.root);
+        } else if (!document || typeof document.root !== 'object' || Array.isArray(document.root)) {
+            document = { root: document || {} };
+        }
+        document.format = 'meetree';
+        document.version = 1;
+        document.source = document.source || { format: 'json', filename: 'tree.meetree.json' };
+        document.root = normaliseNode(document.root, 'Untitled');
+        return document;
+    }
+
+    function syntheticRoot(title, children) {
+        return { id: newId(), title, content: '', children };
+    }
+
+    function normaliseNode(node, fallbackTitle) {
+        node = node && typeof node === 'object' && !Array.isArray(node) ? node : {};
+        const children = Array.isArray(node.children) ? node.children : Array.isArray(node.nodes) ? node.nodes : [];
+        return {
+            ...node,
+            id: node.id ? String(node.id) : newId(),
+            title: node.title || node.name ? String(node.title || node.name) : fallbackTitle,
+            content: node.content || node.body || node.text ? String(node.content || node.body || node.text) : '',
+            children: children.filter(child => child && typeof child === 'object').map(child => normaliseNode(child, 'Untitled')),
+        };
     }
 
     function saveNow() {
@@ -352,6 +383,7 @@
         let index = lines[0] && lines[0].trim().startsWith('<Treepad') ? 1 : 0;
         const root = { id: newId(), title: 'HJT document', content: '', children: [] };
         const stack = [];
+        let baseDepth = null;
 
         while (index < lines.length) {
             while (index < lines.length && lines[index].trim() === '') {
@@ -373,7 +405,15 @@
                 title += ` ${depthLine}`;
                 depthLine = lines[++index];
             }
-            const depth = Number.parseInt(depthLine, 10);
+            let depth = Number.parseInt(depthLine, 10);
+            if (baseDepth === null) {
+                baseDepth = depth;
+            }
+            depth -= baseDepth;
+            if (depth < 0) {
+                baseDepth += depth;
+                depth = 0;
+            }
             index++;
 
             const content = [];
@@ -588,7 +628,7 @@
                 documentData = decodeCtd(content);
                 documentData.source.filename = file.name;
             } else if (file.name.toLowerCase().endsWith('.json')) {
-                documentData = JSON.parse(content);
+                documentData = normaliseDocument(JSON.parse(content));
                 documentData.source = documentData.source || { format: 'json', filename: file.name };
                 documentData.source.format = documentData.source.format || 'json';
                 documentData.source.filename = documentData.source.filename || file.name;

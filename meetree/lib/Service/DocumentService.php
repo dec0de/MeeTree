@@ -240,14 +240,60 @@ class DocumentService {
     }
 
     private function normaliseDocument(array $document): array {
-        if (!isset($document['root']) || !is_array($document['root'])) {
+        if ($this->isList($document)) {
+            $document = ['root' => $this->syntheticRoot('JSON document', $document)];
+        } elseif (isset($document['root']) && is_array($document['root']) && $this->isList($document['root'])) {
+            $document['root'] = $this->syntheticRoot('JSON document', $document['root']);
+        } elseif (!isset($document['root']) || !is_array($document['root'])) {
             $document = ['root' => $document];
         }
+        $document['root'] = $this->normaliseNode($document['root'], 'Untitled');
         $document['format'] = 'meetree';
         $document['version'] = 1;
         $document['source'] = $document['source'] ?? ['format' => 'json', 'filename' => self::DOCUMENT_FILE];
         $document['activeFile'] = $document['activeFile'] ?? ['path' => $this->defaultDocumentPath(), 'format' => 'json'];
         return $document;
+    }
+
+    private function syntheticRoot(string $title, array $children): array {
+        return [
+            'id' => bin2hex(random_bytes(8)),
+            'title' => $title,
+            'content' => '',
+            'children' => $children,
+        ];
+    }
+
+    private function normaliseNode(array $node, string $fallbackTitle): array {
+        $children = [];
+        if (isset($node['children']) && is_array($node['children'])) {
+            $children = $node['children'];
+        } elseif (isset($node['nodes']) && is_array($node['nodes'])) {
+            $children = $node['nodes'];
+        }
+
+        $normalisedChildren = [];
+        foreach ($children as $child) {
+            if (is_array($child)) {
+                $normalisedChildren[] = $this->normaliseNode($child, 'Untitled');
+            }
+        }
+
+        $node['id'] = isset($node['id']) && is_scalar($node['id']) && (string)$node['id'] !== '' ? (string)$node['id'] : bin2hex(random_bytes(8));
+        $title = $node['title'] ?? $node['name'] ?? null;
+        $content = $node['content'] ?? $node['body'] ?? $node['text'] ?? '';
+        $node['title'] = is_scalar($title) && (string)$title !== '' ? (string)$title : $fallbackTitle;
+        $node['content'] = is_scalar($content) ? (string)$content : '';
+        $node['children'] = $normalisedChildren;
+        unset($node['nodes']);
+        return $node;
+    }
+
+    private function isList(array $value): bool {
+        if ($value === []) {
+            return true;
+        }
+        return array_keys($value) === range(0, count($value) - 1);
     }
 
     private function withMeta(array $document, string $sourceFormat, string $sourceFilename): array {
