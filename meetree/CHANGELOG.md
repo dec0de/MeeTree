@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.9 - 2026-06-20
+
+### Added
+
+- Add undo for tree add, delete, move, and sort actions with a ↶ button and Ctrl/Cmd+Z shortcut.
+
 ## 1.0.8 - 2026-06-20
 
 ### Fixed

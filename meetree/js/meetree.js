@@ -33,6 +33,7 @@
     let isSaving = false;
     let saveQueued = false;
     let currentFileBrowserPath = '/';
+    const undoStack = [];
     const collapsedIds = new Set();
 
     const requestToken = OC.requestToken;
@@ -137,6 +138,41 @@
         (node.children || []).forEach(child => collapseSubtree(child));
     }
 
+    function clone(value) {
+        return JSON.parse(JSON.stringify(value));
+    }
+
+    function pushUndoState() {
+        syncEditorToNode();
+        undoStack.push({
+            root: clone(documentData.root),
+            selectedId,
+            collapsedIds: Array.from(collapsedIds),
+        });
+        if (undoStack.length > 50) {
+            undoStack.shift();
+        }
+    }
+
+    function undoLastChange() {
+        const previous = undoStack.pop();
+        if (!previous) {
+            setStatus('Nothing to undo');
+            return;
+        }
+        documentData.root = previous.root;
+        collapsedIds.clear();
+        previous.collapsedIds.forEach(id => collapsedIds.add(id));
+        selectedId = findNode(previous.selectedId) ? previous.selectedId : documentData.root.id;
+        selectNode(selectedId, false);
+        markDirty(true);
+        setStatus('Undid last tree change');
+    }
+
+    function isTextEditingTarget(target) {
+        return target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement || target.isContentEditable;
+    }
+
     function updateExportFormatDefault() {
         const format = documentData && documentData.source ? documentData.source.format : 'json';
         exportFormatEl.value = ['hjt', 'ctd', 'json'].includes(format) ? format : 'json';
@@ -227,6 +263,7 @@
                 return;
             }
 
+            pushUndoState();
             const [movingNode] = sourceInfo.siblings.splice(sourceInfo.index, 1);
             if (mode === 'inside') {
                 targetInfo.node.children = targetInfo.node.children || [];
@@ -363,6 +400,7 @@
             throw new Error(`Could not load document (${response.status})`);
         }
         documentData = await response.json();
+        undoStack.length = 0;
         selectedId = null;
         updateExportFormatDefault();
         selectNode(documentData.root.id, false);
@@ -422,6 +460,7 @@
         if (!found) {
             return;
         }
+        pushUndoState();
         const child = { id: newId(), title: 'New node', content: '', children: [] };
         found.node.children = found.node.children || [];
         found.node.children.unshift(child);
@@ -437,6 +476,7 @@
             setStatus('Selected branch has fewer than two children to sort');
             return;
         }
+        pushUndoState();
         const multiplier = direction === 'desc' ? -1 : 1;
         found.node.children.sort((left, right) => multiplier * (left.title || '').localeCompare(right.title || '', undefined, { sensitivity: 'base' }));
         renderTree();
@@ -456,12 +496,15 @@
         if ((info.node.children || []).length > 0 && !window.confirm('Delete this node and all child nodes?')) {
             return;
         }
+        pushUndoState();
         info.siblings.splice(info.index, 1);
         const nextSelection = info.siblings[info.index] || info.siblings[info.index - 1] || info.parent;
         selectNode(nextSelection.id);
         markDirty(true);
         setStatus('Node deleted');
     });
+
+    document.getElementById('meetree-undo').addEventListener('click', undoLastChange);
 
     titleEl.addEventListener('input', () => {
         syncEditorToNode();
@@ -487,6 +530,7 @@
             body: JSON.stringify({ filename: file.name, content }),
         });
         documentData = await response.json();
+        undoStack.length = 0;
         selectedId = null;
         collapsedIds.clear();
         updateExportFormatDefault();
@@ -558,6 +602,7 @@
             throw new Error(`Could not open ${path} (${response.status})`);
         }
         documentData = await response.json();
+        undoStack.length = 0;
         selectedId = null;
         collapsedIds.clear();
         updateExportFormatDefault();
@@ -718,6 +763,13 @@
             saveNow();
             event.preventDefault();
             event.returnValue = '';
+        }
+    });
+
+    window.addEventListener('keydown', event => {
+        if ((event.metaKey || event.ctrlKey) && !event.shiftKey && event.key.toLowerCase() === 'z' && !isTextEditingTarget(event.target)) {
+            event.preventDefault();
+            undoLastChange();
         }
     });
 
