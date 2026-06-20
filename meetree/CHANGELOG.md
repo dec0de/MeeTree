@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.2 - 2026-06-20
+
+### Fixed
+
+- Use solid white filled shapes for the navigation icon to avoid dark stroke rendering.
+
 ## 1.0.1 - 2026-06-20
 
 ### Fixed
