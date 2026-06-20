@@ -228,7 +228,8 @@
 }
 
 .meetree-tree-guide.elbow::before {
-    bottom: 17px;
+    bottom: auto;
+    height: 18px;
 }
 
 .meetree-tree-guide.tee::after,

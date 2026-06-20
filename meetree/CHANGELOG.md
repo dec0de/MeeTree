@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.1 - 2026-06-20
+
+### Fixed
+
+- Make the navigation icon explicitly white for Nextcloud's sidebar.
+- Make final tree branch connectors render as clearer L-shaped elbows.
+
 ## 1.0.0 - 2026-06-20
 
 ### Changed
