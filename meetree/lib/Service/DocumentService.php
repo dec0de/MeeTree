@@ -36,13 +36,24 @@ class DocumentService {
 
         $folder = $this->getOrCreateFolder();
         $lastActivePath = $this->getLastActivePath();
-        if ($lastActivePath !== null) {
+        if ($lastActivePath !== null && $lastActivePath !== $this->defaultDocumentPath()) {
             try {
                 $document = $this->decodeNativeJson($this->getFile($lastActivePath)->getContent());
                 $document['activeFile'] = ['path' => $lastActivePath, 'format' => 'json'];
                 return $document;
             } catch (\Throwable) {
                 $this->clearLastActivePath();
+            }
+        }
+
+        $newestImportedPath = $this->getNewestImportedDocumentPath($folder);
+        if ($newestImportedPath !== null) {
+            try {
+                $document = $this->decodeNativeJson($this->getFile($newestImportedPath)->getContent());
+                $document['activeFile'] = ['path' => $newestImportedPath, 'format' => 'json'];
+                $this->setLastActivePath($newestImportedPath);
+                return $document;
+            } catch (\Throwable) {
             }
         }
 
@@ -386,6 +397,24 @@ class DocumentService {
         }
     }
 
+    private function getNewestImportedDocumentPath(Folder $folder): ?string {
+        $newestFile = null;
+        foreach ($folder->getDirectoryListing() as $node) {
+            if (!$node instanceof File) {
+                continue;
+            }
+            $name = $node->getName();
+            if ($name === self::DOCUMENT_FILE || $name === self::STATE_FILE || !str_ends_with(strtolower($name), '.meetree.json')) {
+                continue;
+            }
+            if ($newestFile === null || $node->getMTime() > $newestFile->getMTime()) {
+                $newestFile = $node;
+            }
+        }
+
+        return $newestFile instanceof File ? $this->joinPath('/' . self::APP_FOLDER, $newestFile->getName()) : null;
+    }
+
     private function setLastActivePath(string $path): void {
         $json = json_encode([
             'lastActiveFile' => [
@@ -471,6 +500,9 @@ class DocumentService {
     }
 
     private function isSupportedFilename(string $filename): bool {
+        if ($filename === self::STATE_FILE) {
+            return false;
+        }
         return preg_match('/\.(meetree\.json|json|hjt|ctd)$/i', $filename) === 1;
     }
 

@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 0.1.11 - 2026-06-20
+
+### Fixed
+
+- Prefer the newest imported MeeTree document on reload when no explicit active document has been remembered yet.
+- Hide MeeTree's internal state file from the file browser.
+
 ## 0.1.10 - 2026-06-20
 
 ### Fixed
