@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.12 - 2026-06-20
+
+### Fixed
+
+- Keep autosave status and bottom status messages consistent after save failures and recoveries.
+- Show more detailed autosave failure messages when the server response includes details.
+
 ## 1.0.11 - 2026-06-20
 
 ### Added

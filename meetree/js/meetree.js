@@ -86,6 +86,19 @@
         saveStateEl.textContent = message;
     }
 
+    async function responseErrorMessage(response, fallback) {
+        const text = await response.text().catch(() => '');
+        if (!text) {
+            return fallback;
+        }
+        try {
+            const data = JSON.parse(text);
+            return data.message || data.error || fallback;
+        } catch (error) {
+            return text.length > 180 ? `${fallback}: ${text.slice(0, 180)}...` : `${fallback}: ${text}`;
+        }
+    }
+
     function markDirty(immediate = false) {
         isDirty = true;
         setSaveState('Unsaved changes');
@@ -450,12 +463,13 @@
                 body: JSON.stringify({ document: documentData }),
             });
             if (!response.ok) {
-                throw new Error(`Save failed (${response.status})`);
+                throw new Error(await responseErrorMessage(response, `Save failed (${response.status})`));
             }
             isDirty = false;
             setSaveState('Saved');
+            setStatus(`Saved ${activeFilePath() || 'document'}`);
         } catch (error) {
-            setSaveState('Save failed');
+            setSaveState('Autosave failed');
             setStatus(error.message);
         } finally {
             isSaving = false;
