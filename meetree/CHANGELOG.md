@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 0.1.10 - 2026-06-20
+
+### Fixed
+
+- Remember the active MeeTree document and reload it after browser refresh or app restart.
+
 ## 0.1.9 - 2026-06-20
 
 ### Fixed

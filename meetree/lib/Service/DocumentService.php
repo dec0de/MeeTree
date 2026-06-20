@@ -14,6 +14,7 @@ use RuntimeException;
 class DocumentService {
     private const APP_FOLDER = 'MeeTree';
     private const DOCUMENT_FILE = 'tree.meetree.json';
+    private const STATE_FILE = 'state.json';
     private const OLD_APP_FOLDER = 'TreeMee';
     private const OLD_DOCUMENT_FILE = 'tree.treemee.json';
     private const LEGACY_DOCUMENT_FILE = 'tree.hjt';
@@ -28,13 +29,29 @@ class DocumentService {
 
     public function getDocument(string $path = ''): array {
         if ($path !== '') {
-            return $this->decodeNativeJson($this->getFile($path)->getContent());
+            $document = $this->decodeNativeJson($this->getFile($path)->getContent());
+            $document['activeFile'] = ['path' => $this->normalisePath($path), 'format' => 'json'];
+            return $document;
         }
 
         $folder = $this->getOrCreateFolder();
+        $lastActivePath = $this->getLastActivePath();
+        if ($lastActivePath !== null) {
+            try {
+                $document = $this->decodeNativeJson($this->getFile($lastActivePath)->getContent());
+                $document['activeFile'] = ['path' => $lastActivePath, 'format' => 'json'];
+                return $document;
+            } catch (\Throwable) {
+                $this->clearLastActivePath();
+            }
+        }
+
         try {
             $file = $folder->get(self::DOCUMENT_FILE);
-            return $this->decodeNativeJson($file->getContent());
+            $document = $this->decodeNativeJson($file->getContent());
+            $document['activeFile'] = ['path' => $this->defaultDocumentPath(), 'format' => 'json'];
+            $this->setLastActivePath($this->defaultDocumentPath());
+            return $document;
         } catch (NotFoundException) {
             try {
                 $oldFolder = $this->getUserFolder()->get(self::OLD_APP_FOLDER);
@@ -64,11 +81,13 @@ class DocumentService {
     public function saveDocument(array $document): void {
         $document = $this->normaliseDocument($document);
         $path = (string)($document['activeFile']['path'] ?? $this->defaultDocumentPath());
+        $document['activeFile'] = ['path' => $this->normalisePath($path), 'format' => 'json'];
         $json = json_encode($document, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         if (!is_string($json)) {
             throw new RuntimeException('Unable to encode MeeTree JSON document.');
         }
         $this->putFileContent($path, $json . "\n");
+        $this->setLastActivePath($path);
     }
 
     public function listFiles(string $path): array {
@@ -348,6 +367,45 @@ class DocumentService {
             $file->putContent($content);
         } catch (NotFoundException) {
             $parent->newFile($name, $content);
+        }
+    }
+
+    private function getLastActivePath(): ?string {
+        try {
+            $file = $this->getOrCreateFolder()->get(self::STATE_FILE);
+            if (!$file instanceof File) {
+                return null;
+            }
+            $state = json_decode($file->getContent(), true);
+            if (!is_array($state) || !isset($state['lastActiveFile']['path']) || !is_string($state['lastActiveFile']['path'])) {
+                return null;
+            }
+            return $this->normalisePath($state['lastActiveFile']['path']);
+        } catch (NotFoundException) {
+            return null;
+        }
+    }
+
+    private function setLastActivePath(string $path): void {
+        $json = json_encode([
+            'lastActiveFile' => [
+                'path' => $this->normalisePath($path),
+                'format' => 'json',
+            ],
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        if (!is_string($json)) {
+            return;
+        }
+        $this->putFileContent($this->joinPath('/' . self::APP_FOLDER, self::STATE_FILE), $json . "\n");
+    }
+
+    private function clearLastActivePath(): void {
+        try {
+            $file = $this->getOrCreateFolder()->get(self::STATE_FILE);
+            if ($file instanceof File) {
+                $file->delete();
+            }
+        } catch (NotFoundException) {
         }
     }
 

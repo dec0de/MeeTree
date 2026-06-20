@@ -319,7 +319,7 @@
         selectedId = null;
         updateExportFormatDefault();
         selectNode(documentData.root.id, false);
-        setStatus('Loaded MeeTree/tree.meetree.json');
+        setStatus(`Loaded ${activeFilePath() || 'MeeTree/tree.meetree.json'}`);
     }
 
     async function saveNow() {
