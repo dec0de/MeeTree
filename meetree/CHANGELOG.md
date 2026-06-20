@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.5 - 2026-06-20
+
+### Changed
+
+- Allow the root tree node to collapse and expand like other branches.
+
 ## 1.0.4 - 2026-06-20
 
 ### Fixed

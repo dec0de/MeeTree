@@ -354,9 +354,9 @@
                 guides.appendChild(connector);
             }
             const children = node.children || [];
-            const isCollapsed = !isRoot && collapsedIds.has(node.id);
+            const isCollapsed = collapsedIds.has(node.id);
             row.appendChild(guides);
-            if (children.length > 0 && !isRoot) {
+            if (children.length > 0) {
                 const toggle = document.createElement('button');
                 toggle.type = 'button';
                 toggle.className = 'meetree-tree-toggle';
