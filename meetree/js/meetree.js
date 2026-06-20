@@ -343,11 +343,14 @@
         setSaveState('Saving...');
         renderTree();
         try {
-            await fetch(endpoint, {
+            const response = await fetch(endpoint, {
                 method: 'PUT',
                 headers: headers(),
                 body: JSON.stringify({ document: documentData }),
             });
+            if (!response.ok) {
+                throw new Error(`Save failed (${response.status})`);
+            }
             isDirty = false;
             setSaveState('Saved');
         } catch (error) {
@@ -663,9 +666,11 @@
         document.getElementById(id).addEventListener('change', runSearch);
     });
 
-    window.addEventListener('beforeunload', () => {
-        if (isDirty) {
+    window.addEventListener('beforeunload', event => {
+        if (isDirty || isSaving || saveQueued) {
             saveNow();
+            event.preventDefault();
+            event.returnValue = '';
         }
     });
 

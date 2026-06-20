@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 0.1.12 - 2026-06-20
+
+### Fixed
+
+- Detect failed autosaves instead of showing Saved after an unsuccessful response.
+- Warn before browser refresh while edits are still dirty or saving.
+
 ## 0.1.11 - 2026-06-20
 
 ### Fixed
