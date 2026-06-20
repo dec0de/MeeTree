@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.4 - 2026-06-20
+
+### Fixed
+
+- Use a black source icon so Nextcloud's icon filter renders it white in the app bar.
+
 ## 1.0.3 - 2026-06-20
 
 ### Changed
