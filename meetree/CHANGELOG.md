@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 0.1.7 - 2026-06-20
+
+### Fixed
+
+- Keep the root tree branch expanded so collapsing it cannot hide all real notes.
+
 ## 0.1.6 - 2026-06-20
 
 ### Changed

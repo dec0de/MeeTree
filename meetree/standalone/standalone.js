@@ -280,13 +280,14 @@
                 guides.appendChild(connector);
             }
             const children = node.children || [];
+            const isCollapsed = !isRoot && collapsedIds.has(node.id);
             row.appendChild(guides);
-            if (children.length > 0) {
+            if (children.length > 0 && !isRoot) {
                 const toggle = document.createElement('button');
                 toggle.type = 'button';
                 toggle.className = 'meetree-tree-toggle';
-                toggle.textContent = collapsedIds.has(node.id) ? '+' : '-';
-                toggle.title = collapsedIds.has(node.id) ? 'Expand branch' : 'Collapse branch';
+                toggle.textContent = isCollapsed ? '+' : '-';
+                toggle.title = isCollapsed ? 'Expand branch' : 'Collapse branch';
                 toggle.addEventListener('click', event => {
                     event.stopPropagation();
                     if (collapsedIds.has(node.id)) {
@@ -309,7 +310,7 @@
             button.addEventListener('click', () => selectNode(node.id));
             row.appendChild(button);
             treeEl.appendChild(row);
-            if (collapsedIds.has(node.id)) {
+            if (isCollapsed) {
                 return;
             }
             const childAncestors = isRoot ? ancestorHasNext : ancestorHasNext.concat(!isLast);
