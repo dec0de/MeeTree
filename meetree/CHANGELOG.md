@@ -2,7 +2,7 @@
 
 All notable changes to MeeTree are documented in this file.
 
-## 1.0.7 - 2026-06-20
+## 1.0.8 - 2026-06-20
 
 ### Fixed
 
