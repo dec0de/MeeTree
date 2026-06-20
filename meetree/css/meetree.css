@@ -11,12 +11,16 @@
 }
 
 #meetree-app {
-    position: relative;
+    position: fixed;
+    top: 50px;
+    right: 0;
+    bottom: 0;
+    left: 0;
     display: grid;
     grid-template-columns: minmax(280px, 34vw) 1fr;
-    width: 100%;
+    width: auto;
     max-width: none;
-    height: calc(100vh - 50px);
+    height: auto;
     background: var(--color-main-background);
 }
 
