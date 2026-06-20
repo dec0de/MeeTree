@@ -1,0 +1,58 @@
+# Reference source trees kept outside the app repository
+jreepad/
+cherrytree/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editors / IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# Dependencies
+vendor/
+node_modules/
+
+# Build / release artifacts
+build/
+dist/
+*.tar.gz
+*.zip
+
+# Nextcloud app signing certificates / private material
+*.key
+*.csr
+*.crt
+*.pem
+
+# Logs / temporary files
+*.log
+tmp/
+temp/
+.cache/
+
+# Test / coverage output
+.phpunit.result.cache
+coverage/
+.clover.xml
+
+# Package manager noise
+composer.phar
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Personal/exported note documents; keep examples if added later
+*.meetree.json
+!examples/*.meetree.json
