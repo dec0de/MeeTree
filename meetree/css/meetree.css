@@ -120,7 +120,7 @@
 
 .meetree-search {
     display: grid;
-    gap: 8px;
+    gap: 6px;
     padding: 12px;
 }
 
@@ -131,7 +131,7 @@
 .meetree-search-options {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 14px;
+    gap: 4px 14px;
     align-items: center;
 }
 

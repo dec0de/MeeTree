@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.3 - 2026-06-20
+
+### Changed
+
+- Tighten spacing between the search input and search options.
+- Replace the app icon with a simpler white node-tree mark.
+
 ## 1.0.2 - 2026-06-20
 
 ### Fixed
