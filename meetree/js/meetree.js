@@ -285,6 +285,9 @@
 
     async function loadDocument() {
         const response = await fetch(endpoint, { headers: headers() });
+        if (!response.ok) {
+            throw new Error(`Could not load document (${response.status})`);
+        }
         documentData = await response.json();
         selectedId = null;
         updateExportFormatDefault();
@@ -428,6 +431,9 @@
         const response = await fetch(`${OC.generateUrl('/apps/meetree/files')}?${new URLSearchParams({ path }).toString()}`, {
             headers: headers(),
         });
+        if (!response.ok) {
+            throw new Error(`Could not list Nextcloud files (${response.status})`);
+        }
         const data = await response.json();
         currentFileBrowserPath = data.path;
         filePathEl.textContent = data.path;
@@ -451,7 +457,7 @@
                 if (entry.type === 'folder') {
                     loadFileList(entry.path);
                 } else {
-                    openNextcloudFile(entry.path);
+                    openNextcloudFile(entry.path).catch(error => setStatus(error.message));
                 }
             });
             fileListEl.appendChild(button);
@@ -469,6 +475,9 @@
             headers: headers(),
             body: JSON.stringify({ path }),
         });
+        if (!response.ok) {
+            throw new Error(`Could not open ${path} (${response.status})`);
+        }
         documentData = await response.json();
         selectedId = null;
         collapsedIds.clear();
@@ -482,7 +491,11 @@
 
     document.getElementById('meetree-open-nextcloud').addEventListener('click', () => {
         filePanel.hidden = false;
-        loadFileList(currentFileBrowserPath).catch(error => setStatus(error.message));
+        setStatus('Opening Nextcloud file browser...');
+        loadFileList(currentFileBrowserPath).catch(error => {
+            fileListEl.textContent = error.message;
+            setStatus(error.message);
+        });
     });
 
     document.getElementById('meetree-file-close').addEventListener('click', () => {
@@ -490,12 +503,18 @@
     });
 
     document.getElementById('meetree-file-refresh').addEventListener('click', () => {
-        loadFileList(currentFileBrowserPath).catch(error => setStatus(error.message));
+        loadFileList(currentFileBrowserPath).catch(error => {
+            fileListEl.textContent = error.message;
+            setStatus(error.message);
+        });
     });
 
     document.getElementById('meetree-file-up').addEventListener('click', () => {
         const parent = currentFileBrowserPath === '/' ? '/' : currentFileBrowserPath.replace(/\/[^/]+\/?$/, '') || '/';
-        loadFileList(parent).catch(error => setStatus(error.message));
+        loadFileList(parent).catch(error => {
+            fileListEl.textContent = error.message;
+            setStatus(error.message);
+        });
     });
 
     document.getElementById('meetree-file-toggle').addEventListener('click', () => {

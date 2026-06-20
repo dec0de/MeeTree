@@ -1,7 +1,21 @@
+#content,
+#app-content,
+#app-content-vue {
+    width: 100%;
+    max-width: none;
+}
+
+#meetree-app,
+#meetree-app * {
+    box-sizing: border-box;
+}
+
 #meetree-app {
     position: relative;
     display: grid;
     grid-template-columns: minmax(280px, 34vw) 1fr;
+    width: 100%;
+    max-width: none;
     height: calc(100vh - 50px);
     background: var(--color-main-background);
 }
