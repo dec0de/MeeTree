@@ -202,6 +202,11 @@
         return (node.children || []).some(child => child.id === id || nodeContains(child, id));
     }
 
+    function collapseSubtree(node) {
+        collapsedIds.add(node.id);
+        (node.children || []).forEach(child => collapseSubtree(child));
+    }
+
     function updateExportFormatDefault() {
         const format = documentData && documentData.source ? documentData.source.format : 'json';
         exportFormatEl.value = ['hjt', 'ctd', 'json'].includes(format) ? format : 'json';
@@ -367,7 +372,7 @@
                     if (collapsedIds.has(node.id)) {
                         collapsedIds.delete(node.id);
                     } else {
-                        collapsedIds.add(node.id);
+                        collapseSubtree(node);
                     }
                     renderTree();
                 });
