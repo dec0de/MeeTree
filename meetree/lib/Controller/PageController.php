@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace OCA\MeeTree\Controller;
 
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IRequest;
 use OCP\IURLGenerator;
@@ -18,7 +20,13 @@ class PageController extends Controller {
         parent::__construct('meetree', $request);
     }
 
-    public function index(): TemplateResponse {
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
+	public function index(): TemplateResponse {
         Util::addScript('meetree', 'meetree');
         Util::addStyle('meetree', 'meetree');
 
