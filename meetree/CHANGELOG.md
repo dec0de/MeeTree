@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 0.1.3 - 2026-06-20
+
+### Changed
+
+- Restyle the Nextcloud file browser as a familiar file list with icons, names, and format metadata.
+
 ## 0.1.2 - 2026-06-20
 
 ### Fixed

@@ -104,6 +104,16 @@
         return `${OC.generateUrl(`/apps/meetree/export/${format}`)}${params}`;
     }
 
+    function formatLabel(format) {
+        if (format === 'hjt') {
+            return 'HJT';
+        }
+        if (format === 'ctd') {
+            return 'CTD';
+        }
+        return 'MeeTree JSON';
+    }
+
     function syncEditorToNode() {
         const found = selectedId ? findNode(selectedId) : null;
         if (!found) {
@@ -442,8 +452,8 @@
         if (data.parent !== null) {
             const up = document.createElement('button');
             up.type = 'button';
-            up.className = 'meetree-file-row';
-            up.textContent = '..';
+            up.className = 'meetree-file-row meetree-file-folder';
+            up.innerHTML = '<span class="meetree-file-icon" aria-hidden="true"></span><span class="meetree-file-name">..</span><span class="meetree-file-meta">Parent folder</span>';
             up.addEventListener('click', () => loadFileList(data.parent));
             fileListEl.appendChild(up);
         }
@@ -451,8 +461,17 @@
         data.entries.forEach(entry => {
             const button = document.createElement('button');
             button.type = 'button';
-            button.className = 'meetree-file-row';
-            button.textContent = `${entry.type === 'folder' ? 'Folder: ' : 'File: '}${entry.name}`;
+            button.className = `meetree-file-row meetree-file-${entry.type}`;
+            const icon = document.createElement('span');
+            icon.className = 'meetree-file-icon';
+            icon.setAttribute('aria-hidden', 'true');
+            const name = document.createElement('span');
+            name.className = 'meetree-file-name';
+            name.textContent = entry.name;
+            const meta = document.createElement('span');
+            meta.className = 'meetree-file-meta';
+            meta.textContent = entry.type === 'folder' ? 'Folder' : formatLabel(entry.format);
+            button.append(icon, name, meta);
             button.addEventListener('click', () => {
                 if (entry.type === 'folder') {
                     loadFileList(entry.path);
