@@ -2,8 +2,11 @@
     'use strict';
 
     const storageKey = 'meetree.standalone.document';
+    const sidebarWidthStorageKey = 'meetree.sidebarWidth';
     const endMarker = '<end node> 5P9i0s8y19Z';
+    const app = document.getElementById('meetree-app');
     const treeEl = document.getElementById('meetree-tree');
+    const dividerEl = document.getElementById('meetree-divider');
     const titleEl = document.getElementById('meetree-node-title');
     const contentEl = document.getElementById('meetree-node-content');
     const statusEl = document.getElementById('meetree-status');
@@ -26,6 +29,46 @@
 
     function newId() {
         return Math.random().toString(16).slice(2) + Date.now().toString(16);
+    }
+
+    function initDivider() {
+        const storedWidth = localStorage.getItem(sidebarWidthStorageKey);
+        if (storedWidth) {
+            app.style.setProperty('--meetree-sidebar-width', storedWidth);
+        }
+        if (!dividerEl) {
+            return;
+        }
+        dividerEl.addEventListener('pointerdown', event => {
+            if (window.matchMedia('(max-width: 800px)').matches) {
+                return;
+            }
+            event.preventDefault();
+            dividerEl.classList.add('dragging');
+            app.classList.add('resizing-sidebar');
+            dividerEl.setPointerCapture(event.pointerId);
+
+            function onMove(moveEvent) {
+                const rect = app.getBoundingClientRect();
+                const width = Math.min(Math.max(240, moveEvent.clientX - rect.left), Math.max(320, rect.width * 0.7));
+                const value = `${Math.round(width)}px`;
+                app.style.setProperty('--meetree-sidebar-width', value);
+                localStorage.setItem(sidebarWidthStorageKey, value);
+            }
+
+            function onUp(upEvent) {
+                dividerEl.classList.remove('dragging');
+                app.classList.remove('resizing-sidebar');
+                dividerEl.releasePointerCapture(upEvent.pointerId);
+                dividerEl.removeEventListener('pointermove', onMove);
+                dividerEl.removeEventListener('pointerup', onUp);
+                dividerEl.removeEventListener('pointercancel', onUp);
+            }
+
+            dividerEl.addEventListener('pointermove', onMove);
+            dividerEl.addEventListener('pointerup', onUp);
+            dividerEl.addEventListener('pointercancel', onUp);
+        });
     }
 
     function emptyDocument() {
@@ -721,6 +764,7 @@
     });
 
     updateExportFormatDefault();
+    initDivider();
     selectedId = null;
     selectNode(documentData.root.id, false);
     setSaveState('Saved');

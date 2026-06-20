@@ -30,6 +30,7 @@
         </div>
         <nav id="meetree-tree" class="meetree-tree" aria-label="MeeTree document tree"></nav>
     </aside>
+    <div id="meetree-divider" class="meetree-divider" role="separator" aria-orientation="vertical" aria-label="Resize tree panel"></div>
     <main class="meetree-editor">
         <div class="meetree-editor-toolbar">
             <input id="meetree-node-title" type="text" placeholder="Node title" />

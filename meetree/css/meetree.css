@@ -17,7 +17,7 @@
     bottom: 0;
     left: 0;
     display: grid;
-    grid-template-columns: minmax(280px, 34vw) 1fr;
+    grid-template-columns: var(--meetree-sidebar-width, minmax(280px, 34vw)) 7px minmax(0, 1fr);
     width: auto;
     max-width: none;
     height: auto;
@@ -29,8 +29,25 @@
     flex-direction: column;
     min-width: 0;
     min-height: 0;
-    border-right: 1px solid var(--color-border);
+    border-right: 0;
     background: linear-gradient(180deg, var(--color-background-hover), var(--color-main-background));
+}
+
+.meetree-divider {
+    position: relative;
+    z-index: 3;
+    width: 7px;
+    cursor: col-resize;
+    background: linear-gradient(90deg, transparent 0 3px, var(--color-border) 3px 4px, transparent 4px 7px);
+}
+
+.meetree-divider:hover,
+.meetree-divider.dragging {
+    background: linear-gradient(90deg, transparent 0 2px, var(--color-primary-element, var(--color-border)) 2px 5px, transparent 5px 7px);
+}
+
+#meetree-app.resizing-sidebar {
+    user-select: none;
 }
 
 .meetree-header,
@@ -449,6 +466,10 @@
     #meetree-app {
         grid-template-columns: 1fr;
         grid-template-rows: minmax(260px, 45vh) 1fr;
+    }
+
+    .meetree-divider {
+        display: none;
     }
 
     .meetree-sidebar {

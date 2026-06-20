@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 0.1.13 - 2026-06-20
+
+### Added
+
+- Add a draggable divider between the tree and editor panes, with per-browser width persistence.
+
 ## 0.1.12 - 2026-06-20
 
 ### Fixed
