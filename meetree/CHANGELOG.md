@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.0 - 2026-06-20
+
+### Changed
+
+- Replace the app navigation icon with a background-free monochrome tree-note mark.
+
 ## 0.1.13 - 2026-06-20
 
 ### Added
