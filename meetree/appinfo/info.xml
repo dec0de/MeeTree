@@ -19,7 +19,7 @@
         <developer>https://github.com/theo/meetree#app-store-release</developer>
     </documentation>
     <dependencies>
-        <nextcloud min-version="27" max-version="31" />
+        <nextcloud min-version="27" max-version="33" />
     </dependencies>
     <navigations>
         <navigation>
