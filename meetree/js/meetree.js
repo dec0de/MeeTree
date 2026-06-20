@@ -14,6 +14,10 @@
     const saveStateEl = document.getElementById('meetree-save-state');
     const fileMenu = document.getElementById('meetree-file-menu');
     const exportFormatEl = document.getElementById('meetree-export-format');
+    const filePanel = document.getElementById('meetree-file-panel');
+    const filePathEl = document.getElementById('meetree-file-path');
+    const fileListEl = document.getElementById('meetree-file-list');
+    const filePanelHeader = filePanel.querySelector('.meetree-file-panel-header');
     const searchPanel = document.getElementById('meetree-search-panel');
     const searchPanelHeader = searchPanel.querySelector('.meetree-search-panel-header');
     const searchInput = document.getElementById('meetree-search-input');
@@ -25,6 +29,7 @@
     let isDirty = false;
     let isSaving = false;
     let saveQueued = false;
+    let currentFileBrowserPath = '/';
     const collapsedIds = new Set();
 
     const requestToken = OC.requestToken;
@@ -87,6 +92,16 @@
     function updateExportFormatDefault() {
         const format = documentData && documentData.source ? documentData.source.format : 'json';
         exportFormatEl.value = ['hjt', 'ctd', 'json'].includes(format) ? format : 'json';
+    }
+
+    function activeFilePath() {
+        return documentData && documentData.activeFile ? documentData.activeFile.path || '' : '';
+    }
+
+    function exportUrl(format) {
+        const path = activeFilePath();
+        const params = path ? `?${new URLSearchParams({ path }).toString()}` : '';
+        return `${OC.generateUrl(`/apps/meetree/export/${format}`)}${params}`;
     }
 
     function syncEditorToNode() {
@@ -403,7 +418,84 @@
 
     document.getElementById('meetree-export').addEventListener('click', async () => {
         await saveNow();
-        window.location.href = OC.generateUrl(`/apps/meetree/export/${exportFormatEl.value}`);
+        window.location.href = exportUrl(exportFormatEl.value);
+    });
+
+    async function loadFileList(path = '/') {
+        currentFileBrowserPath = path;
+        filePathEl.textContent = path;
+        fileListEl.textContent = 'Loading...';
+        const response = await fetch(`${OC.generateUrl('/apps/meetree/files')}?${new URLSearchParams({ path }).toString()}`, {
+            headers: headers(),
+        });
+        const data = await response.json();
+        currentFileBrowserPath = data.path;
+        filePathEl.textContent = data.path;
+        fileListEl.textContent = '';
+
+        if (data.parent !== null) {
+            const up = document.createElement('button');
+            up.type = 'button';
+            up.className = 'meetree-file-row';
+            up.textContent = '..';
+            up.addEventListener('click', () => loadFileList(data.parent));
+            fileListEl.appendChild(up);
+        }
+
+        data.entries.forEach(entry => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'meetree-file-row';
+            button.textContent = `${entry.type === 'folder' ? 'Folder: ' : 'File: '}${entry.name}`;
+            button.addEventListener('click', () => {
+                if (entry.type === 'folder') {
+                    loadFileList(entry.path);
+                } else {
+                    openNextcloudFile(entry.path);
+                }
+            });
+            fileListEl.appendChild(button);
+        });
+
+        if (fileListEl.textContent === '') {
+            fileListEl.textContent = 'No supported files found in this folder.';
+        }
+    }
+
+    async function openNextcloudFile(path) {
+        await saveNow();
+        const response = await fetch(OC.generateUrl('/apps/meetree/files/open'), {
+            method: 'POST',
+            headers: headers(),
+            body: JSON.stringify({ path }),
+        });
+        documentData = await response.json();
+        selectedId = null;
+        collapsedIds.clear();
+        updateExportFormatDefault();
+        selectNode(documentData.root.id, false);
+        isDirty = false;
+        setSaveState('Saved');
+        filePanel.hidden = true;
+        setStatus(documentData.message || `Opened ${path}`);
+    }
+
+    document.getElementById('meetree-open-nextcloud').addEventListener('click', () => {
+        filePanel.hidden = false;
+        loadFileList(currentFileBrowserPath).catch(error => setStatus(error.message));
+    });
+
+    document.getElementById('meetree-file-close').addEventListener('click', () => {
+        filePanel.hidden = true;
+    });
+
+    document.getElementById('meetree-file-refresh').addEventListener('click', () => {
+        loadFileList(currentFileBrowserPath).catch(error => setStatus(error.message));
+    });
+
+    document.getElementById('meetree-file-up').addEventListener('click', () => {
+        const parent = currentFileBrowserPath === '/' ? '/' : currentFileBrowserPath.replace(/\/[^/]+\/?$/, '') || '/';
+        loadFileList(parent).catch(error => setStatus(error.message));
     });
 
     document.getElementById('meetree-file-toggle').addEventListener('click', () => {
@@ -422,38 +514,43 @@
         searchPanel.hidden = true;
     });
 
-    searchPanelHeader.addEventListener('pointerdown', event => {
-        if (event.target.closest('button')) {
-            return;
-        }
-        const rect = searchPanel.getBoundingClientRect();
-        const offsetX = event.clientX - rect.left;
-        const offsetY = event.clientY - rect.top;
-        searchPanel.classList.add('dragging');
-        searchPanelHeader.setPointerCapture(event.pointerId);
+    function makePanelDraggable(panel, header) {
+        header.addEventListener('pointerdown', event => {
+            if (event.target.closest('button')) {
+                return;
+            }
+            const rect = panel.getBoundingClientRect();
+            const offsetX = event.clientX - rect.left;
+            const offsetY = event.clientY - rect.top;
+            panel.classList.add('dragging');
+            header.setPointerCapture(event.pointerId);
 
-        function onMove(moveEvent) {
-            const maxLeft = window.innerWidth - searchPanel.offsetWidth - 8;
-            const maxTop = window.innerHeight - searchPanel.offsetHeight - 8;
-            const left = Math.min(Math.max(8, moveEvent.clientX - offsetX), Math.max(8, maxLeft));
-            const top = Math.min(Math.max(8, moveEvent.clientY - offsetY), Math.max(8, maxTop));
-            searchPanel.style.left = `${left}px`;
-            searchPanel.style.top = `${top}px`;
-            searchPanel.style.right = 'auto';
-        }
+            function onMove(moveEvent) {
+                const maxLeft = window.innerWidth - panel.offsetWidth - 8;
+                const maxTop = window.innerHeight - panel.offsetHeight - 8;
+                const left = Math.min(Math.max(8, moveEvent.clientX - offsetX), Math.max(8, maxLeft));
+                const top = Math.min(Math.max(8, moveEvent.clientY - offsetY), Math.max(8, maxTop));
+                panel.style.left = `${left}px`;
+                panel.style.top = `${top}px`;
+                panel.style.right = 'auto';
+            }
 
-        function onUp(upEvent) {
-            searchPanel.classList.remove('dragging');
-            searchPanelHeader.releasePointerCapture(upEvent.pointerId);
-            searchPanelHeader.removeEventListener('pointermove', onMove);
-            searchPanelHeader.removeEventListener('pointerup', onUp);
-            searchPanelHeader.removeEventListener('pointercancel', onUp);
-        }
+            function onUp(upEvent) {
+                panel.classList.remove('dragging');
+                header.releasePointerCapture(upEvent.pointerId);
+                header.removeEventListener('pointermove', onMove);
+                header.removeEventListener('pointerup', onUp);
+                header.removeEventListener('pointercancel', onUp);
+            }
 
-        searchPanelHeader.addEventListener('pointermove', onMove);
-        searchPanelHeader.addEventListener('pointerup', onUp);
-        searchPanelHeader.addEventListener('pointercancel', onUp);
-    });
+            header.addEventListener('pointermove', onMove);
+            header.addEventListener('pointerup', onUp);
+            header.addEventListener('pointercancel', onUp);
+        });
+    }
+
+    makePanelDraggable(filePanel, filePanelHeader);
+    makePanelDraggable(searchPanel, searchPanelHeader);
 
     function textMatches(haystack, query, caseSensitive, regex) {
         if (!regex) {

@@ -39,6 +39,24 @@ class DocumentController extends Controller {
 
 	/**
 	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
+	public function listFiles(string $path = '/'): JSONResponse {
+        return new JSONResponse($this->documentService->listFiles($path));
+    }
+
+	/**
+	 * @NoAdminRequired
+	 */
+	#[NoAdminRequired]
+	public function openFile(string $path): JSONResponse {
+        return new JSONResponse($this->documentService->openFile($path));
+    }
+
+	/**
+	 * @NoAdminRequired
 	 */
 	#[NoAdminRequired]
 	public function importDocument(string $content, string $filename = 'import.hjt'): JSONResponse {
@@ -61,9 +79,9 @@ class DocumentController extends Controller {
 	 */
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
-	public function exportHjt(): DataDownloadResponse {
+	public function exportHjt(string $path = ''): DataDownloadResponse {
         return new DataDownloadResponse(
-            $this->documentService->exportHjt(),
+            $this->documentService->exportHjt($path),
             'meetree.hjt',
             'text/plain; charset=utf-8'
         );
@@ -75,9 +93,9 @@ class DocumentController extends Controller {
 	 */
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
-	public function exportCtd(): DataDownloadResponse {
+	public function exportCtd(string $path = ''): DataDownloadResponse {
         return new DataDownloadResponse(
-            $this->documentService->exportCtd(),
+            $this->documentService->exportCtd($path),
             'meetree.ctd',
             'application/xml; charset=utf-8'
         );
@@ -89,9 +107,9 @@ class DocumentController extends Controller {
 	 */
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
-	public function exportJson(): DataDownloadResponse {
+	public function exportJson(string $path = ''): DataDownloadResponse {
         return new DataDownloadResponse(
-            $this->documentService->exportJson(),
+            $this->documentService->exportJson($path),
             'meetree.meetree.json',
             'application/json; charset=utf-8'
         );

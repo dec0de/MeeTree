@@ -13,6 +13,7 @@
             <button type="button" id="meetree-search-toggle">Search</button>
         </header>
         <div id="meetree-file-menu" class="meetree-file-actions" hidden>
+            <button type="button" id="meetree-open-nextcloud">Open from Nextcloud</button>
             <label class="button" for="meetree-import-file">Import</label>
             <input id="meetree-import-file" type="file" accept=".hjt,.ctd,.json,.txt,text/plain,application/json,application/xml" />
             <label for="meetree-export-format">Export as</label>
@@ -45,6 +46,20 @@
             <label><input id="meetree-search-case" type="checkbox" /> Match case</label>
             <label><input id="meetree-search-regex" type="checkbox" /> Regex</label>
             <div id="meetree-search-results" class="meetree-search-results"></div>
+        </div>
+    </section>
+    <section id="meetree-file-panel" class="meetree-file-panel" hidden>
+        <header class="meetree-file-panel-header">
+            <strong>Open from Nextcloud</strong>
+            <button type="button" id="meetree-file-close" aria-label="Close file browser">Close</button>
+        </header>
+        <div class="meetree-file-browser">
+            <div class="meetree-file-path" id="meetree-file-path">/</div>
+            <div class="meetree-file-browser-actions">
+                <button type="button" id="meetree-file-up">Up</button>
+                <button type="button" id="meetree-file-refresh">Refresh</button>
+            </div>
+            <div id="meetree-file-list" class="meetree-file-list"></div>
         </div>
     </section>
 </div>

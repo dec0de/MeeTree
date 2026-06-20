@@ -6,6 +6,7 @@ namespace OCA\MeeTree\Service;
 
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
+use OCP\Files\File;
 use OCP\Files\NotFoundException;
 use OCP\IUserSession;
 use RuntimeException;
@@ -25,7 +26,11 @@ class DocumentService {
     ) {
     }
 
-    public function getDocument(): array {
+    public function getDocument(string $path = ''): array {
+        if ($path !== '') {
+            return $this->decodeNativeJson($this->getFile($path)->getContent());
+        }
+
         $folder = $this->getOrCreateFolder();
         try {
             $file = $folder->get(self::DOCUMENT_FILE);
@@ -57,15 +62,88 @@ class DocumentService {
     }
 
     public function saveDocument(array $document): void {
-        $folder = $this->getOrCreateFolder();
-        $json = json_encode($this->normaliseDocument($document), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $document = $this->normaliseDocument($document);
+        $path = (string)($document['activeFile']['path'] ?? $this->defaultDocumentPath());
+        $json = json_encode($document, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         if (!is_string($json)) {
             throw new RuntimeException('Unable to encode MeeTree JSON document.');
         }
+        $this->putFileContent($path, $json . "\n");
+    }
+
+    public function listFiles(string $path): array {
+        $path = $this->normalisePath($path);
+        $folder = $path === '/' ? $this->getUserFolder() : $this->getFolder($path);
+        $entries = [];
+
+        foreach ($folder->getDirectoryListing() as $node) {
+            if ($node instanceof Folder) {
+                $entries[] = [
+                    'name' => $node->getName(),
+                    'path' => $this->joinPath($path, $node->getName()),
+                    'type' => 'folder',
+                ];
+            } elseif ($node instanceof File && $this->isSupportedFilename($node->getName())) {
+                $entries[] = [
+                    'name' => $node->getName(),
+                    'path' => $this->joinPath($path, $node->getName()),
+                    'type' => 'file',
+                    'format' => $this->formatFromFilename($node->getName()),
+                ];
+            }
+        }
+
+        usort($entries, static function (array $left, array $right): int {
+            if ($left['type'] !== $right['type']) {
+                return $left['type'] === 'folder' ? -1 : 1;
+            }
+            return strcasecmp($left['name'], $right['name']);
+        });
+
+        return [
+            'path' => $path,
+            'parent' => $path === '/' ? null : $this->parentPath($path),
+            'entries' => $entries,
+        ];
+    }
+
+    public function openFile(string $path): array {
+        $path = $this->normalisePath($path);
+        $file = $this->getFile($path);
+        $format = $this->formatFromFilename($file->getName());
+        $content = $file->getContent();
+
+        if ($format === 'ctd') {
+            $document = $this->withMeta($this->ctdCodec->decode($content), 'ctd', $file->getName());
+            $document['sourceFile'] = ['path' => $path, 'format' => 'ctd'];
+            return $this->saveConvertedDocument($document, $path);
+        }
+        if ($format === 'hjt') {
+            $document = $this->withMeta($this->hjtCodec->decode($content), 'hjt', $file->getName());
+            $document['sourceFile'] = ['path' => $path, 'format' => 'hjt'];
+            return $this->saveConvertedDocument($document, $path);
+        }
+
+        $document = $this->decodeNativeJson($content);
+        $document['activeFile'] = ['path' => $path, 'format' => 'json'];
+        $document['source'] = ['format' => 'json', 'filename' => $file->getName()];
+        $this->saveDocument($document);
+        return $document;
+    }
+
+    private function saveConvertedDocument(array $document, string $sourcePath): array {
+        $targetPath = $this->convertedPath($sourcePath);
         try {
-            $folder->get(self::DOCUMENT_FILE)->putContent($json . "\n");
-        } catch (NotFoundException) {
-            $folder->newFile(self::DOCUMENT_FILE, $json . "\n");
+            $document['activeFile'] = ['path' => $targetPath, 'format' => 'json'];
+            $this->saveDocument($document);
+            $document['message'] = 'Converted file saved as ' . $targetPath;
+            return $document;
+        } catch (\Throwable) {
+            $fallbackPath = $this->joinPath('/' . self::APP_FOLDER, basename($targetPath));
+            $document['activeFile'] = ['path' => $fallbackPath, 'format' => 'json'];
+            $this->saveDocument($document);
+            $document['message'] = 'Could not save beside source; converted file saved as ' . $fallbackPath;
+            return $document;
         }
     }
 
@@ -78,26 +156,28 @@ class DocumentService {
         } else {
             $document = $this->withMeta($this->hjtCodec->decode($content), 'hjt', $filename);
         }
+        $document['activeFile'] = ['path' => $this->joinPath('/' . self::APP_FOLDER, $this->convertedFilename($filename)), 'format' => 'json'];
         $this->saveDocument($document);
         return $document;
     }
 
     public function importHjt(string $content): array {
         $document = $this->withMeta($this->hjtCodec->decode($content), 'hjt', 'import.hjt');
+        $document['activeFile'] = ['path' => $this->joinPath('/' . self::APP_FOLDER, $this->convertedFilename('import.hjt')), 'format' => 'json'];
         $this->saveDocument($document);
         return $document;
     }
 
-    public function exportHjt(): string {
-        return $this->hjtCodec->encode($this->getDocument());
+    public function exportHjt(string $path = ''): string {
+        return $this->hjtCodec->encode($this->getDocument($path));
     }
 
-    public function exportCtd(): string {
-        return $this->ctdCodec->encode($this->getDocument());
+    public function exportCtd(string $path = ''): string {
+        return $this->ctdCodec->encode($this->getDocument($path));
     }
 
-    public function exportJson(): string {
-        $json = json_encode($this->getDocument(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    public function exportJson(string $path = ''): string {
+        $json = json_encode($this->getDocument($path), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         if (!is_string($json)) {
             throw new RuntimeException('Unable to encode MeeTree JSON document.');
         }
@@ -166,6 +246,7 @@ class DocumentService {
         $document['format'] = 'meetree';
         $document['version'] = 1;
         $document['source'] = $document['source'] ?? ['format' => 'json', 'filename' => self::DOCUMENT_FILE];
+        $document['activeFile'] = $document['activeFile'] ?? ['path' => $this->defaultDocumentPath(), 'format' => 'json'];
         return $document;
     }
 
@@ -191,6 +272,116 @@ class DocumentService {
         }
 
         return $folder;
+    }
+
+    private function getFolder(string $path): Folder {
+        $node = $this->getUserFolder()->get(ltrim($path, '/'));
+        if (!$node instanceof Folder) {
+            throw new RuntimeException('Path is not a folder: ' . $path);
+        }
+        return $node;
+    }
+
+    private function getFile(string $path): File {
+        $node = $this->getUserFolder()->get(ltrim($this->normalisePath($path), '/'));
+        if (!$node instanceof File) {
+            throw new RuntimeException('Path is not a file: ' . $path);
+        }
+        return $node;
+    }
+
+    private function putFileContent(string $path, string $content): void {
+        $path = $this->normalisePath($path);
+        $parent = $this->ensureFolder($this->parentPath($path));
+        $name = basename($path);
+        try {
+            $file = $parent->get($name);
+            if (!$file instanceof File) {
+                throw new RuntimeException('Path exists but is not a file: ' . $path);
+            }
+            $file->putContent($content);
+        } catch (NotFoundException) {
+            $parent->newFile($name, $content);
+        }
+    }
+
+    private function ensureFolder(string $path): Folder {
+        $path = $this->normalisePath($path);
+        if ($path === '/') {
+            return $this->getUserFolder();
+        }
+
+        $current = $this->getUserFolder();
+        foreach (explode('/', trim($path, '/')) as $part) {
+            if ($part === '') {
+                continue;
+            }
+            try {
+                $next = $current->get($part);
+            } catch (NotFoundException) {
+                $next = $current->newFolder($part);
+            }
+            if (!$next instanceof Folder) {
+                throw new RuntimeException('Path segment is not a folder: ' . $part);
+            }
+            $current = $next;
+        }
+        return $current;
+    }
+
+    private function normalisePath(string $path): string {
+        $parts = [];
+        foreach (explode('/', str_replace('\\', '/', $path)) as $part) {
+            if ($part === '' || $part === '.') {
+                continue;
+            }
+            if ($part === '..') {
+                array_pop($parts);
+                continue;
+            }
+            $parts[] = $part;
+        }
+        return '/' . implode('/', $parts);
+    }
+
+    private function joinPath(string $path, string $name): string {
+        return $this->normalisePath(rtrim($path, '/') . '/' . $name);
+    }
+
+    private function parentPath(string $path): string {
+        $path = $this->normalisePath($path);
+        $parent = dirname($path);
+        return $parent === '\\' || $parent === '.' ? '/' : $parent;
+    }
+
+    private function convertedPath(string $sourcePath): string {
+        return $this->joinPath($this->parentPath($sourcePath), $this->convertedFilename(basename($sourcePath)));
+    }
+
+    private function convertedFilename(string $filename): string {
+        return preg_replace('/\.(meetree\.json|json|hjt|ctd)$/i', '', $filename) . '.meetree.json';
+    }
+
+    private function defaultDocumentPath(): string {
+        return $this->joinPath('/' . self::APP_FOLDER, self::DOCUMENT_FILE);
+    }
+
+    private function isSupportedFilename(string $filename): bool {
+        return in_array($this->formatFromFilename($filename), ['json', 'hjt', 'ctd'], true);
+    }
+
+    private function formatFromFilename(string $filename): string {
+        $lower = strtolower($filename);
+        if (str_ends_with($lower, '.ctd')) {
+            return 'ctd';
+        }
+        if (str_ends_with($lower, '.hjt')) {
+            return 'hjt';
+        }
+        if (str_ends_with($lower, '.json')) {
+            return 'json';
+        }
+        throw new RuntimeException('Unsupported file type: ' . $filename);
     }
 
     private function getUserFolder(): Folder {
