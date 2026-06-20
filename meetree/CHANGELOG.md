@@ -2,6 +2,14 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 0.1.1 - 2026-06-20
+
+### Fixed
+
+- Use the full Nextcloud page width for the MeeTree editor.
+- Route the Nextcloud file browser through the document endpoint to avoid 404s on newly added routes.
+- Show clearer file-browser loading and error feedback.
+
 ## 0.1.0 - 2026-06-20
 
 ### Added
