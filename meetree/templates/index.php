@@ -5,24 +5,28 @@
     <aside class="meetree-sidebar">
         <header class="meetree-header">
             <h2>MeeTree</h2>
-            <button type="button" id="meetree-file-toggle">File</button>
-            <button type="button" id="meetree-add-node">New node</button>
-            <button type="button" id="meetree-delete-node">Delete</button>
-            <button type="button" id="meetree-sort-asc">Sort A-Z</button>
-            <button type="button" id="meetree-sort-desc">Sort Z-A</button>
+            <button type="button" id="meetree-open-toggle">Open</button>
+            <button type="button" id="meetree-export-toggle">Export</button>
             <button type="button" id="meetree-search-toggle">Search</button>
         </header>
-        <div id="meetree-file-menu" class="meetree-file-actions" hidden>
+        <div id="meetree-open-menu" class="meetree-file-actions" hidden>
             <button type="button" id="meetree-open-nextcloud">Open from Nextcloud</button>
             <label class="button" for="meetree-import-file">Import</label>
             <input id="meetree-import-file" type="file" accept=".hjt,.ctd,.json,.txt,text/plain,application/json,application/xml" />
-            <label for="meetree-export-format">Export as</label>
+        </div>
+        <div id="meetree-export-menu" class="meetree-file-actions" hidden>
             <select id="meetree-export-format">
                 <option value="json">MeeTree JSON</option>
                 <option value="hjt">TreePad/Jreepad HJT</option>
                 <option value="ctd">CherryTree CTD</option>
             </select>
             <button type="button" id="meetree-export">Export</button>
+        </div>
+        <div class="meetree-tree-actions" aria-label="Tree actions">
+            <button type="button" id="meetree-add-node" title="New child node">+ Node</button>
+            <button type="button" id="meetree-delete-node">Delete</button>
+            <button type="button" id="meetree-sort-asc">Sort A-Z</button>
+            <button type="button" id="meetree-sort-desc">Sort Z-A</button>
         </div>
         <nav id="meetree-tree" class="meetree-tree" aria-label="MeeTree document tree"></nav>
     </aside>

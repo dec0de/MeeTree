@@ -8,7 +8,8 @@
     const contentEl = document.getElementById('meetree-node-content');
     const statusEl = document.getElementById('meetree-status');
     const saveStateEl = document.getElementById('meetree-save-state');
-    const fileMenu = document.getElementById('meetree-file-menu');
+    const openMenu = document.getElementById('meetree-open-menu');
+    const exportMenu = document.getElementById('meetree-export-menu');
     const exportFormatEl = document.getElementById('meetree-export-format');
     const searchPanel = document.getElementById('meetree-search-panel');
     const searchPanelHeader = searchPanel.querySelector('.meetree-search-panel-header');
@@ -609,8 +610,14 @@
         }
     });
 
-    document.getElementById('meetree-file-toggle').addEventListener('click', () => {
-        fileMenu.hidden = !fileMenu.hidden;
+    document.getElementById('meetree-open-toggle').addEventListener('click', () => {
+        openMenu.hidden = !openMenu.hidden;
+        exportMenu.hidden = true;
+    });
+
+    document.getElementById('meetree-export-toggle').addEventListener('click', () => {
+        exportMenu.hidden = !exportMenu.hidden;
+        openMenu.hidden = true;
     });
 
     document.getElementById('meetree-search-toggle').addEventListener('click', () => {

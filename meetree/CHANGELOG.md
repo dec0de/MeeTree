@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 0.1.5 - 2026-06-20
+
+### Changed
+
+- Simplify the sidebar into separate Open and Export controls with compact tree actions.
+- Use normal-weight tree labels and stronger tree connector lines.
+
 ## 0.1.4 - 2026-06-20
 
 ### Changed

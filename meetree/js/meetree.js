@@ -12,7 +12,8 @@
     const contentEl = document.getElementById('meetree-node-content');
     const statusEl = document.getElementById('meetree-status');
     const saveStateEl = document.getElementById('meetree-save-state');
-    const fileMenu = document.getElementById('meetree-file-menu');
+    const openMenu = document.getElementById('meetree-open-menu');
+    const exportMenu = document.getElementById('meetree-export-menu');
     const exportFormatEl = document.getElementById('meetree-export-format');
     const filePanel = document.getElementById('meetree-file-panel');
     const filePathEl = document.getElementById('meetree-file-path');
@@ -516,14 +517,17 @@
         setStatus(documentData.message || `Opened ${path}`);
     }
 
-    document.getElementById('meetree-open-nextcloud').addEventListener('click', () => {
-        filePanel.hidden = false;
-        setStatus('Opening Nextcloud file browser...');
-        loadFileList(currentFileBrowserPath).catch(error => {
-            fileListEl.textContent = error.message;
-            setStatus(error.message);
+    const openNextcloudButton = document.getElementById('meetree-open-nextcloud');
+    if (openNextcloudButton) {
+        openNextcloudButton.addEventListener('click', () => {
+            filePanel.hidden = false;
+            setStatus('Opening Nextcloud file browser...');
+            loadFileList(currentFileBrowserPath).catch(error => {
+                fileListEl.textContent = error.message;
+                setStatus(error.message);
+            });
         });
-    });
+    }
 
     document.getElementById('meetree-file-close').addEventListener('click', () => {
         filePanel.hidden = true;
@@ -544,8 +548,14 @@
         });
     });
 
-    document.getElementById('meetree-file-toggle').addEventListener('click', () => {
-        fileMenu.hidden = !fileMenu.hidden;
+    document.getElementById('meetree-open-toggle').addEventListener('click', () => {
+        openMenu.hidden = !openMenu.hidden;
+        exportMenu.hidden = true;
+    });
+
+    document.getElementById('meetree-export-toggle').addEventListener('click', () => {
+        exportMenu.hidden = !exportMenu.hidden;
+        openMenu.hidden = true;
     });
 
     document.getElementById('meetree-search-toggle').addEventListener('click', () => {
