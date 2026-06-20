@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.7 - 2026-06-20
+
+### Fixed
+
+- Remove inherited spacing between the search field and search options.
+
 ## 1.0.6 - 2026-06-20
 
 ### Changed
