@@ -21,7 +21,12 @@ class HjtCodec {
             $index = 1;
         }
 
-        $root = null;
+        $root = [
+            'id' => $this->newId(),
+            'title' => 'HJT document',
+            'content' => '',
+            'children' => [],
+        ];
         $stack = [];
         while ($index < count($lines)) {
             while ($index < count($lines) && trim((string)$lines[$index]) === '') {
@@ -64,9 +69,15 @@ class HjtCodec {
                 'children' => [],
             ];
 
-            if ($depth === 0 || $root === null) {
-                $root = $node;
-                $stack[0] = &$root;
+            if ($depth === 0) {
+                $root['children'][] = $node;
+                $childIndex = count($root['children']) - 1;
+                $stack[0] = &$root['children'][$childIndex];
+                foreach (array_keys($stack) as $stackDepth) {
+                    if ($stackDepth > 0) {
+                        unset($stack[$stackDepth]);
+                    }
+                }
                 continue;
             }
 
@@ -84,8 +95,12 @@ class HjtCodec {
             }
         }
 
-        if ($root === null) {
+        if ($root['children'] === []) {
             return $this->emptyDocument();
+        }
+
+        if (count($root['children']) === 1) {
+            return ['root' => $root['children'][0]];
         }
 
         return ['root' => $root];

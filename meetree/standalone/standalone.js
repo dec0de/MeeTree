@@ -350,7 +350,7 @@
     function decodeHjt(hjt) {
         const lines = hjt.split(/\r\n|\r|\n/);
         let index = lines[0] && lines[0].trim().startsWith('<Treepad') ? 1 : 0;
-        let root = null;
+        const root = { id: newId(), title: 'HJT document', content: '', children: [] };
         const stack = [];
 
         while (index < lines.length) {
@@ -387,9 +387,10 @@
             index++;
 
             const node = { id: newId(), title, content: content.join('\n'), children: [] };
-            if (depth === 0 || !root) {
-                root = node;
-                stack[0] = root;
+            if (depth === 0) {
+                root.children.push(node);
+                stack[0] = node;
+                stack.length = 1;
             } else {
                 const parent = stack[depth - 1];
                 if (!parent) {
@@ -401,7 +402,15 @@
             }
         }
 
-        return root ? { format: 'meetree', version: 1, source: { format: 'hjt', filename: 'import.hjt' }, root } : emptyDocument();
+        if (root.children.length === 0) {
+            return emptyDocument();
+        }
+        return {
+            format: 'meetree',
+            version: 1,
+            source: { format: 'hjt', filename: 'import.hjt' },
+            root: root.children.length === 1 ? root.children[0] : root,
+        };
     }
 
     function decodeCtd(ctd) {

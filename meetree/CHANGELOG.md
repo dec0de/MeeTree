@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 0.1.8 - 2026-06-20
+
+### Fixed
+
+- Preserve all top-level HJT nodes instead of replacing earlier branches with the last top-level node.
+
 ## 0.1.7 - 2026-06-20
 
 ### Fixed
