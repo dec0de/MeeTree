@@ -367,7 +367,7 @@ class DocumentService {
     }
 
     private function isSupportedFilename(string $filename): bool {
-        return in_array($this->formatFromFilename($filename), ['json', 'hjt', 'ctd'], true);
+        return preg_match('/\.(meetree\.json|json|hjt|ctd)$/i', $filename) === 1;
     }
 
     private function formatFromFilename(string $filename): string {

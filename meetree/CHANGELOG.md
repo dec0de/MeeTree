@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 0.1.2 - 2026-06-20
+
+### Fixed
+
+- Prevent the Nextcloud file browser from crashing when folders contain unsupported file types.
+
 ## 0.1.1 - 2026-06-20
 
 ### Fixed
