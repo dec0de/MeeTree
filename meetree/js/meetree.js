@@ -7,6 +7,8 @@
     }
 
     const endpoint = app.dataset.endpoint;
+    const browseEndpoint = app.dataset.browseEndpoint;
+    const openEndpoint = app.dataset.openEndpoint;
     const treeEl = document.getElementById('meetree-tree');
     const titleEl = document.getElementById('meetree-node-title');
     const contentEl = document.getElementById('meetree-node-content');
@@ -428,7 +430,7 @@
         currentFileBrowserPath = path;
         filePathEl.textContent = path;
         fileListEl.textContent = 'Loading...';
-        const response = await fetch(`${OC.generateUrl('/apps/meetree/files')}?${new URLSearchParams({ path }).toString()}`, {
+        const response = await fetch(`${browseEndpoint}?${new URLSearchParams({ path }).toString()}`, {
             headers: headers(),
         });
         if (!response.ok) {
@@ -470,7 +472,7 @@
 
     async function openNextcloudFile(path) {
         await saveNow();
-        const response = await fetch(OC.generateUrl('/apps/meetree/files/open'), {
+        const response = await fetch(openEndpoint, {
             method: 'POST',
             headers: headers(),
             body: JSON.stringify({ path }),

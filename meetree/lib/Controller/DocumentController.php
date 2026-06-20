@@ -43,7 +43,7 @@ class DocumentController extends Controller {
 	 */
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
-	public function listFiles(string $path = '/'): JSONResponse {
+	public function browse(string $path = '/'): JSONResponse {
         return new JSONResponse($this->documentService->listFiles($path));
     }
 
@@ -51,7 +51,7 @@ class DocumentController extends Controller {
 	 * @NoAdminRequired
 	 */
 	#[NoAdminRequired]
-	public function openFile(string $path): JSONResponse {
+	public function open(string $path): JSONResponse {
         return new JSONResponse($this->documentService->openFile($path));
     }
 

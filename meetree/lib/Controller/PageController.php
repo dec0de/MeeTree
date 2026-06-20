@@ -32,6 +32,8 @@ class PageController extends Controller {
 
         return new TemplateResponse('meetree', 'index', [
             'endpoint' => $this->urlGenerator->linkToRoute('meetree.document.get'),
+            'browseEndpoint' => $this->urlGenerator->linkToRoute('meetree.document.browse'),
+            'openEndpoint' => $this->urlGenerator->linkToRoute('meetree.document.open'),
         ]);
     }
 }
