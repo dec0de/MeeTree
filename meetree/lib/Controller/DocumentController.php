@@ -24,7 +24,13 @@ class DocumentController extends Controller {
 	 * @NoAdminRequired
 	 */
 	#[NoAdminRequired]
-	public function get(): JSONResponse {
+    public function get(string $path = '', string $browse = '', string $open = ''): JSONResponse {
+        if ($browse !== '') {
+            return new JSONResponse($this->documentService->listFiles($path === '' ? '/' : $path));
+        }
+        if ($open !== '') {
+            return new JSONResponse($this->documentService->openFile($open));
+        }
         return new JSONResponse($this->documentService->getDocument());
     }
 

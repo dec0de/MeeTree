@@ -1,7 +1,7 @@
 <?php
 /** @var array $_ */
 ?>
-<div id="meetree-app" data-endpoint="<?php p($_['endpoint']); ?>" data-browse-endpoint="<?php p($_['browseEndpoint']); ?>" data-open-endpoint="<?php p($_['openEndpoint']); ?>">
+<div id="meetree-app" data-endpoint="<?php p($_['endpoint']); ?>">
     <aside class="meetree-sidebar">
         <header class="meetree-header">
             <h2>MeeTree</h2>
