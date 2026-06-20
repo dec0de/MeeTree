@@ -341,11 +341,9 @@
     text-align: left;
     border: 0;
     border-bottom: 1px solid var(--color-border);
-    border-radius: 0;
-    appearance: none;
     background: transparent;
     cursor: pointer;
-    font: inherit;
+    outline: none;
 }
 
 .meetree-file-row:hover,

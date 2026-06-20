@@ -114,6 +114,21 @@
         return 'MeeTree JSON';
     }
 
+    function makeFileRow(className, onActivate) {
+        const row = document.createElement('div');
+        row.className = className;
+        row.tabIndex = 0;
+        row.setAttribute('role', 'listitem');
+        row.addEventListener('click', onActivate);
+        row.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                onActivate();
+            }
+        });
+        return row;
+    }
+
     function syncEditorToNode() {
         const found = selectedId ? findNode(selectedId) : null;
         if (!found) {
@@ -448,20 +463,22 @@
         currentFileBrowserPath = data.path;
         filePathEl.textContent = data.path;
         fileListEl.textContent = '';
+        fileListEl.setAttribute('role', 'list');
 
         if (data.parent !== null) {
-            const up = document.createElement('button');
-            up.type = 'button';
-            up.className = 'meetree-file-row meetree-file-folder';
+            const up = makeFileRow('meetree-file-row meetree-file-folder', () => loadFileList(data.parent));
             up.innerHTML = '<span class="meetree-file-icon" aria-hidden="true"></span><span class="meetree-file-name">..</span><span class="meetree-file-meta">Parent folder</span>';
-            up.addEventListener('click', () => loadFileList(data.parent));
             fileListEl.appendChild(up);
         }
 
         data.entries.forEach(entry => {
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = `meetree-file-row meetree-file-${entry.type}`;
+            const row = makeFileRow(`meetree-file-row meetree-file-${entry.type}`, () => {
+                if (entry.type === 'folder') {
+                    loadFileList(entry.path);
+                } else {
+                    openNextcloudFile(entry.path).catch(error => setStatus(error.message));
+                }
+            });
             const icon = document.createElement('span');
             icon.className = 'meetree-file-icon';
             icon.setAttribute('aria-hidden', 'true');
@@ -471,15 +488,8 @@
             const meta = document.createElement('span');
             meta.className = 'meetree-file-meta';
             meta.textContent = entry.type === 'folder' ? 'Folder' : formatLabel(entry.format);
-            button.append(icon, name, meta);
-            button.addEventListener('click', () => {
-                if (entry.type === 'folder') {
-                    loadFileList(entry.path);
-                } else {
-                    openNextcloudFile(entry.path).catch(error => setStatus(error.message));
-                }
-            });
-            fileListEl.appendChild(button);
+            row.append(icon, name, meta);
+            fileListEl.appendChild(row);
         });
 
         if (fileListEl.textContent === '') {

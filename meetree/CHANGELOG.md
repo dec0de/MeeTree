@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 0.1.4 - 2026-06-20
+
+### Changed
+
+- Render the Nextcloud file browser with ordinary list rows instead of button elements.
+
 ## 0.1.3 - 2026-06-20
 
 ### Changed
