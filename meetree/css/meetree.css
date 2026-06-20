@@ -107,10 +107,22 @@
     padding: 12px;
 }
 
+#meetree-search-input {
+    width: 100%;
+}
+
+.meetree-search-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    align-items: center;
+}
+
 .meetree-search label {
     display: inline-flex;
     gap: 6px;
     align-items: center;
+    white-space: nowrap;
 }
 
 .meetree-search-results {

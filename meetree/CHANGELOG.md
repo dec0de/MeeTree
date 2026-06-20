@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 0.1.6 - 2026-06-20
+
+### Changed
+
+- Make the search input span the search panel and lay search options out horizontally.
+
 ## 0.1.5 - 2026-06-20
 
 ### Changed

@@ -45,10 +45,12 @@
         </header>
         <div class="meetree-search">
             <input id="meetree-search-input" type="search" placeholder="Search titles and content" />
-            <label><input id="meetree-search-title" type="checkbox" checked /> Titles</label>
-            <label><input id="meetree-search-content" type="checkbox" checked /> Content</label>
-            <label><input id="meetree-search-case" type="checkbox" /> Match case</label>
-            <label><input id="meetree-search-regex" type="checkbox" /> Regex</label>
+            <div class="meetree-search-options">
+                <label><input id="meetree-search-title" type="checkbox" checked /> Titles</label>
+                <label><input id="meetree-search-content" type="checkbox" checked /> Content</label>
+                <label><input id="meetree-search-case" type="checkbox" /> Match case</label>
+                <label><input id="meetree-search-regex" type="checkbox" /> Regex</label>
+            </div>
             <div id="meetree-search-results" class="meetree-search-results"></div>
         </div>
     </section>
