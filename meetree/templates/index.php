@@ -23,11 +23,11 @@
             <button type="button" id="meetree-export">Export</button>
         </div>
         <div class="meetree-tree-actions" aria-label="Tree actions">
-            <button type="button" id="meetree-undo" title="Undo last tree change">↶</button>
             <button type="button" id="meetree-add-node" title="New child node">+ Node</button>
             <button type="button" id="meetree-delete-node">Delete</button>
             <button type="button" id="meetree-sort-asc">Sort A-Z</button>
             <button type="button" id="meetree-sort-desc">Sort Z-A</button>
+            <button type="button" id="meetree-undo" title="Undo last tree change">↶</button>
         </div>
         <nav id="meetree-tree" class="meetree-tree" aria-label="MeeTree document tree"></nav>
     </aside>

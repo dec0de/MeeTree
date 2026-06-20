@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.10 - 2026-06-20
+
+### Changed
+
+- Move the tree undo button to the right side of the tree action strip.
+
 ## 1.0.9 - 2026-06-20
 
 ### Added
