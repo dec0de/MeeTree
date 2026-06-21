@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.13 - 2026-06-20
+
+### Changed
+
+- Update app author metadata to Theo Linschooten.
+
 ## 1.0.12 - 2026-06-20
 
 ### Fixed
