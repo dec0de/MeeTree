@@ -7,6 +7,7 @@ return [
         ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
         ['name' => 'document#get', 'url' => '/document', 'verb' => 'GET'],
         ['name' => 'document#save', 'url' => '/document', 'verb' => 'PUT'],
+        ['name' => 'document#newTree', 'url' => '/document/new', 'verb' => 'POST'],
         ['name' => 'document#browse', 'url' => '/browser', 'verb' => 'GET'],
         ['name' => 'document#open', 'url' => '/browser/open', 'verb' => 'POST'],
         ['name' => 'document#importDocument', 'url' => '/import', 'verb' => 'POST'],

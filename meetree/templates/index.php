@@ -10,8 +10,9 @@
             <button type="button" id="meetree-search-toggle">Search</button>
         </header>
         <div id="meetree-open-menu" class="meetree-file-actions" hidden>
-            <button type="button" id="meetree-open-nextcloud">Open from Nextcloud</button>
-            <label class="button" for="meetree-import-file">Import</label>
+            <button type="button" id="meetree-new-tree">Create New Tree</button>
+            <button type="button" id="meetree-open-nextcloud">Open/Convert from Nextcloud</button>
+            <label class="button" for="meetree-import-file">Import from computer</label>
             <input id="meetree-import-file" type="file" accept=".hjt,.ctd,.json,.txt,text/plain,application/json,application/xml" />
         </div>
         <div id="meetree-export-menu" class="meetree-file-actions" hidden>

@@ -174,6 +174,23 @@
         }
     }
 
+    function createNewTree() {
+        if (!window.confirm('Create a new tree? This replaces the standalone preview document in this browser.')) {
+            return;
+        }
+        documentData = emptyDocument();
+        documentData.source.filename = 'untitled.meetree.json';
+        undoStack.length = 0;
+        selectedId = documentData.root.id;
+        loadCollapsedState();
+        updateExportFormatDefault();
+        selectNode(documentData.root.id, false);
+        isDirty = true;
+        saveNow();
+        openMenu.hidden = true;
+        setStatus('Created new standalone tree');
+    }
+
     function findNode(id, node = documentData.root, parent = null) {
         if (node.id === id) {
             return { node, parent };
@@ -723,6 +740,8 @@
     });
     titleEl.addEventListener('blur', () => saveNow());
     contentEl.addEventListener('blur', () => saveNow());
+
+    document.getElementById('meetree-new-tree').addEventListener('click', createNewTree);
 
     document.getElementById('meetree-import-file').addEventListener('change', async event => {
         const file = event.target.files[0];

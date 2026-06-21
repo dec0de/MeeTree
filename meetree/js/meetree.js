@@ -480,6 +480,33 @@
         }
     }
 
+    async function createNewTree() {
+        const filename = window.prompt('New tree filename', 'untitled.meetree.json');
+        if (filename === null) {
+            return;
+        }
+        await saveNow();
+        setStatus('Creating new tree...');
+        const response = await fetch(OC.generateUrl('/apps/meetree/document/new'), {
+            method: 'POST',
+            headers: headers(),
+            body: JSON.stringify({ filename }),
+        });
+        if (!response.ok) {
+            throw new Error(await responseErrorMessage(response, `Could not create new tree (${response.status})`));
+        }
+        documentData = await response.json();
+        undoStack.length = 0;
+        selectedId = null;
+        loadCollapsedState();
+        updateExportFormatDefault();
+        selectNode(documentData.root.id, false);
+        isDirty = false;
+        setSaveState('Saved');
+        openMenu.hidden = true;
+        setStatus(documentData.message || `Created ${activeFilePath()}`);
+    }
+
     function newId() {
         return Math.random().toString(16).slice(2) + Date.now().toString(16);
     }
@@ -547,6 +574,10 @@
     });
     titleEl.addEventListener('blur', () => saveNow());
     contentEl.addEventListener('blur', () => saveNow());
+
+    document.getElementById('meetree-new-tree').addEventListener('click', () => {
+        createNewTree().catch(error => setStatus(error.message));
+    });
 
     document.getElementById('meetree-import-file').addEventListener('change', async event => {
         const file = event.target.files[0];

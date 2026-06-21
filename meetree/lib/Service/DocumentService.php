@@ -101,6 +101,35 @@ class DocumentService {
         $this->setLastActivePath($path);
     }
 
+    public function newTree(string $filename): array {
+        $filename = trim($filename);
+        if ($filename === '') {
+            $filename = 'untitled.meetree.json';
+        }
+        $filename = basename(str_replace('\\', '/', $filename));
+        $filename = preg_replace('/[^A-Za-z0-9._ -]+/', '-', $filename) ?: 'untitled.meetree.json';
+        if (!str_ends_with(strtolower($filename), '.meetree.json')) {
+            $filename = preg_replace('/\.(json|hjt|ctd)$/i', '', $filename) . '.meetree.json';
+        }
+
+        $path = $this->uniqueDocumentPath($this->joinPath('/' . self::APP_FOLDER, $filename));
+        $document = $this->normaliseDocument([
+            'source' => ['format' => 'json', 'filename' => basename($path)],
+            'activeFile' => ['path' => $path, 'format' => 'json'],
+            'root' => [
+                'id' => bin2hex(random_bytes(8)),
+                'title' => 'New tree',
+                'content' => '',
+                'children' => [],
+            ],
+            'uiState' => ['collapsedIds' => []],
+        ]);
+        $document['activeFile'] = ['path' => $path, 'format' => 'json'];
+        $this->saveDocument($document);
+        $document['message'] = 'Created ' . $path;
+        return $document;
+    }
+
     public function listFiles(string $path): array {
         $path = $this->normalisePath($path);
         $folder = $path === '/' ? $this->getUserFolder() : $this->getFolder($path);
@@ -496,6 +525,31 @@ class DocumentService {
 
     private function convertedFilename(string $filename): string {
         return preg_replace('/\.(meetree\.json|json|hjt|ctd)$/i', '', $filename) . '.meetree.json';
+    }
+
+    private function uniqueDocumentPath(string $path): string {
+        $path = $this->normalisePath($path);
+        $parentPath = $this->parentPath($path);
+        $filename = basename($path);
+        $base = preg_replace('/\.meetree\.json$/i', '', $filename) ?: 'untitled';
+        $candidate = $path;
+        $counter = 2;
+
+        while ($this->pathExists($candidate)) {
+            $candidate = $this->joinPath($parentPath, $base . '-' . $counter . '.meetree.json');
+            $counter++;
+        }
+
+        return $candidate;
+    }
+
+    private function pathExists(string $path): bool {
+        try {
+            $this->getUserFolder()->get(ltrim($this->normalisePath($path), '/'));
+            return true;
+        } catch (NotFoundException) {
+            return false;
+        }
     }
 
     private function defaultDocumentPath(): string {

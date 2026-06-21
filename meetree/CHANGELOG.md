@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.14 - 2026-06-21
+
+### Added
+
+- Add a New Tree action that creates a fresh MeeTree JSON document under /MeeTree/ without overwriting existing files.
+
 ## 1.0.13 - 2026-06-20
 
 ### Changed

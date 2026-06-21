@@ -45,6 +45,14 @@ class DocumentController extends Controller {
 
 	/**
 	 * @NoAdminRequired
+	 */
+	#[NoAdminRequired]
+	public function newTree(string $filename = 'untitled.meetree.json'): JSONResponse {
+        return new JSONResponse($this->documentService->newTree($filename));
+    }
+
+	/**
+	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
 	#[NoAdminRequired]
