@@ -12,6 +12,9 @@
     const dividerEl = document.getElementById('meetree-divider');
     const titleEl = document.getElementById('meetree-node-title');
     const contentEl = document.getElementById('meetree-node-content');
+    const previewEl = document.getElementById('meetree-node-preview');
+    const editModeButton = document.getElementById('meetree-edit-mode');
+    const previewModeButton = document.getElementById('meetree-preview-mode');
     const statusEl = document.getElementById('meetree-status');
     const saveStateEl = document.getElementById('meetree-save-state');
     const openMenu = document.getElementById('meetree-open-menu');
@@ -33,6 +36,7 @@
     let isSaving = false;
     let saveQueued = false;
     let currentFileBrowserPath = '/';
+    let editorMode = 'edit';
     const undoStack = [];
     const collapsedIds = new Set();
 
@@ -221,6 +225,156 @@
             return 'CTD';
         }
         return 'MeeTree JSON';
+    }
+
+    function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, char => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;',
+        })[char]);
+    }
+
+    function safeUrl(value) {
+        try {
+            const url = new URL(value, window.location.href);
+            return ['http:', 'https:', 'mailto:'].includes(url.protocol) ? url.href : '';
+        } catch (error) {
+            return '';
+        }
+    }
+
+    function renderInlineMarkdown(value) {
+        const placeholders = [];
+        function hold(html) {
+            placeholders.push(html);
+            return `\u0000${placeholders.length - 1}\u0000`;
+        }
+
+        value = String(value).replace(/`([^`]+)`/g, (match, code) => hold(`<code>${escapeHtml(code)}</code>`));
+        value = value.replace(/\[([^\]]+)\]\(([^\s)]+)\)/g, (match, label, href) => {
+            const url = safeUrl(href);
+            return url ? hold(`<a href="${escapeHtml(url)}" target="_blank" rel="noreferrer noopener">${escapeHtml(label)}</a>`) : label;
+        });
+        value = escapeHtml(value)
+            .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+            .replace(/__([^_]+)__/g, '<strong>$1</strong>')
+            .replace(/(^|\W)\*([^*]+)\*/g, '$1<em>$2</em>')
+            .replace(/(^|\W)_([^_]+)_/g, '$1<em>$2</em>')
+            .replace(/~~([^~]+)~~/g, '<del>$1</del>');
+        return value.replace(/\u0000(\d+)\u0000/g, (match, index) => placeholders[Number(index)] || '');
+    }
+
+    function isMarkdownBlockStart(line) {
+        return /^\s*(```|#{1,6}\s+|([-*_])\s*\2\s*\2\s*$|>|[-*+]\s+|\d+\.\s+)/.test(line);
+    }
+
+    function renderMarkdown(markdown) {
+        const lines = String(markdown || '').replace(/\r\n?/g, '\n').split('\n');
+        const html = [];
+        let i = 0;
+
+        while (i < lines.length) {
+            const line = lines[i];
+            if (line.trim() === '') {
+                i++;
+                continue;
+            }
+
+            if (/^\s*```/.test(line)) {
+                const code = [];
+                i++;
+                while (i < lines.length && !/^\s*```/.test(lines[i])) {
+                    code.push(lines[i]);
+                    i++;
+                }
+                if (i < lines.length) {
+                    i++;
+                }
+                html.push(`<pre><code>${escapeHtml(code.join('\n'))}</code></pre>`);
+                continue;
+            }
+
+            const heading = line.match(/^\s*(#{1,6})\s+(.+)$/);
+            if (heading) {
+                const level = heading[1].length;
+                html.push(`<h${level}>${renderInlineMarkdown(heading[2])}</h${level}>`);
+                i++;
+                continue;
+            }
+
+            if (/^\s*([-*_])\s*\1\s*\1\s*$/.test(line)) {
+                html.push('<hr>');
+                i++;
+                continue;
+            }
+
+            if (/^\s*>/.test(line)) {
+                const quote = [];
+                while (i < lines.length && /^\s*>/.test(lines[i])) {
+                    quote.push(lines[i].replace(/^\s*>\s?/, ''));
+                    i++;
+                }
+                html.push(`<blockquote>${renderMarkdown(quote.join('\n'))}</blockquote>`);
+                continue;
+            }
+
+            const listMatch = line.match(/^\s*(?:([-*+])|(\d+)\.)\s+(.+)$/);
+            if (listMatch) {
+                const ordered = Boolean(listMatch[2]);
+                const tag = ordered ? 'ol' : 'ul';
+                const items = [];
+                while (i < lines.length) {
+                    const item = lines[i].match(/^\s*(?:([-*+])|(\d+)\.)\s+(.+)$/);
+                    if (!item || Boolean(item[2]) !== ordered) {
+                        break;
+                    }
+                    let content = item[3];
+                    const task = content.match(/^\[( |x|X)\]\s+(.+)$/);
+                    if (task) {
+                        const checked = task[1].toLowerCase() === 'x' ? ' checked' : '';
+                        content = `<input type="checkbox" disabled${checked}>${renderInlineMarkdown(task[2])}`;
+                    } else {
+                        content = renderInlineMarkdown(content);
+                    }
+                    items.push(`<li>${content}</li>`);
+                    i++;
+                }
+                html.push(`<${tag}>${items.join('')}</${tag}>`);
+                continue;
+            }
+
+            const paragraph = [line.trim()];
+            i++;
+            while (i < lines.length && lines[i].trim() !== '' && !isMarkdownBlockStart(lines[i])) {
+                paragraph.push(lines[i].trim());
+                i++;
+            }
+            html.push(`<p>${renderInlineMarkdown(paragraph.join('\n')).replace(/\n/g, '<br>')}</p>`);
+        }
+
+        return html.join('\n');
+    }
+
+    function updateMarkdownPreview() {
+        previewEl.innerHTML = renderMarkdown(contentEl.value);
+    }
+
+    function setEditorMode(mode) {
+        editorMode = mode;
+        const preview = mode === 'preview';
+        if (preview) {
+            syncEditorToNode();
+            updateMarkdownPreview();
+        } else {
+            contentEl.focus();
+        }
+        contentEl.hidden = preview;
+        previewEl.hidden = !preview;
+        editModeButton.classList.toggle('active', !preview);
+        previewModeButton.classList.toggle('active', preview);
     }
 
     function makeFileRow(className, onActivate) {
@@ -419,6 +573,9 @@
         }
         titleEl.value = found.node.title || '';
         contentEl.value = found.node.content || '';
+        if (editorMode === 'preview') {
+            updateMarkdownPreview();
+        }
         renderTree();
     }
 
@@ -570,10 +727,16 @@
     });
     contentEl.addEventListener('input', () => {
         syncEditorToNode();
+        if (editorMode === 'preview') {
+            updateMarkdownPreview();
+        }
         markDirty();
     });
     titleEl.addEventListener('blur', () => saveNow());
     contentEl.addEventListener('blur', () => saveNow());
+
+    editModeButton.addEventListener('click', () => setEditorMode('edit'));
+    previewModeButton.addEventListener('click', () => setEditorMode('preview'));
 
     document.getElementById('meetree-new-tree').addEventListener('click', () => {
         createNewTree().catch(error => setStatus(error.message));

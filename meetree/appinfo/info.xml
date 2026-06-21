@@ -4,7 +4,7 @@
     <name>MeeTree</name>
     <summary>TreePad-style hierarchical notes for Nextcloud</summary>
     <description>MeeTree provides a TreeView/Jreepad-inspired tree note editor with native JSON storage, TreePad Lite HJT import/export, and first-pass CherryTree CTD import/export compatibility.</description>
-    <version>1.0.15</version>
+    <version>1.0.16</version>
     <licence>AGPL-3.0-or-later</licence>
     <author>Theo Linschooten</author>
     <namespace>MeeTree</namespace>

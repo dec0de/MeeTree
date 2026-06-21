@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.16 - 2026-06-21
+
+### Added
+
+- Add Markdown preview mode for node content with support for common formatting.
+
 ## 1.0.15 - 2026-06-21
 
 ### Changed

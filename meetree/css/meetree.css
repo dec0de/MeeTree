@@ -78,7 +78,8 @@
 .meetree-header button,
 .meetree-tree-actions button,
 .meetree-file-actions button,
-.meetree-file-actions .button {
+.meetree-file-actions .button,
+.meetree-mode-button {
     min-height: 32px;
     padding: 5px 10px;
     border: 1px solid var(--color-border);
@@ -91,7 +92,9 @@
 .meetree-header button:hover,
 .meetree-tree-actions button:hover,
 .meetree-file-actions button:hover,
-.meetree-file-actions .button:hover {
+.meetree-file-actions .button:hover,
+.meetree-mode-button:hover,
+.meetree-mode-button.active {
     background: var(--color-background-hover);
 }
 
@@ -296,15 +299,110 @@
     white-space: nowrap;
 }
 
-#meetree-node-content {
+.meetree-mode-button {
+    min-height: 30px;
+    padding: 4px 9px;
+}
+
+.meetree-mode-button.active {
+    border-color: var(--color-primary-element, var(--color-border));
+    color: var(--color-main-text, var(--color-text-maxcontrast));
+}
+
+#meetree-node-content,
+.meetree-markdown-preview {
     flex: 1;
     width: 100%;
     padding: 18px;
-    font: 15px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    resize: none;
     border: 0;
     border-top: 1px solid var(--color-border);
     border-radius: 0;
+}
+
+#meetree-node-content {
+    font: 15px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    resize: none;
+}
+
+.meetree-markdown-preview {
+    overflow: auto;
+    color: var(--color-main-text, var(--color-text-maxcontrast));
+    font: 16px/1.6 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.meetree-markdown-preview[hidden] {
+    display: none;
+}
+
+#meetree-node-content[hidden] {
+    display: none;
+}
+
+.meetree-markdown-preview > :first-child {
+    margin-top: 0;
+}
+
+.meetree-markdown-preview > :last-child {
+    margin-bottom: 0;
+}
+
+.meetree-markdown-preview h1,
+.meetree-markdown-preview h2,
+.meetree-markdown-preview h3,
+.meetree-markdown-preview h4,
+.meetree-markdown-preview h5,
+.meetree-markdown-preview h6 {
+    margin: 1.1em 0 0.35em;
+    font-weight: 650;
+    line-height: 1.25;
+}
+
+.meetree-markdown-preview h1 { font-size: 1.8em; }
+.meetree-markdown-preview h2 { font-size: 1.45em; }
+.meetree-markdown-preview h3 { font-size: 1.2em; }
+
+.meetree-markdown-preview p,
+.meetree-markdown-preview ul,
+.meetree-markdown-preview ol,
+.meetree-markdown-preview blockquote,
+.meetree-markdown-preview pre {
+    margin: 0 0 0.85em;
+}
+
+.meetree-markdown-preview ul,
+.meetree-markdown-preview ol {
+    padding-left: 1.6em;
+}
+
+.meetree-markdown-preview blockquote {
+    padding: 0.1em 0 0.1em 1em;
+    color: var(--color-text-maxcontrast);
+    border-left: 4px solid var(--color-border);
+}
+
+.meetree-markdown-preview code,
+.meetree-markdown-preview pre {
+    border-radius: 6px;
+    background: var(--color-background-hover);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.meetree-markdown-preview code {
+    padding: 0.1em 0.3em;
+}
+
+.meetree-markdown-preview pre {
+    padding: 12px;
+    overflow: auto;
+}
+
+.meetree-markdown-preview pre code {
+    padding: 0;
+    background: transparent;
+}
+
+.meetree-markdown-preview input[type="checkbox"] {
+    margin-right: 0.45em;
 }
 
 #meetree-status {

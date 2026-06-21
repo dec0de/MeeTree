@@ -102,9 +102,12 @@
         <main class="meetree-editor">
             <div class="meetree-editor-toolbar">
                 <input id="meetree-node-title" type="text" placeholder="Node title">
+                <button type="button" id="meetree-edit-mode" class="meetree-mode-button active">Edit</button>
+                <button type="button" id="meetree-preview-mode" class="meetree-mode-button">Preview</button>
                 <span id="meetree-save-state" class="meetree-save-state">Saved</span>
             </div>
-            <textarea id="meetree-node-content" spellcheck="true" placeholder="Write this node's content here"></textarea>
+            <textarea id="meetree-node-content" spellcheck="true" placeholder="Write Markdown content here"></textarea>
+            <article id="meetree-node-preview" class="meetree-markdown-preview" hidden></article>
             <p id="meetree-status" role="status"></p>
         </main>
         <section id="meetree-search-panel" class="meetree-search-panel" hidden>
