@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.15 - 2026-06-21
+
+### Changed
+
+- Rename the Open menu button to File for clearer file actions.
+
 ## 1.0.14 - 2026-06-21
 
 ### Added

@@ -5,7 +5,7 @@
     <aside class="meetree-sidebar">
         <header class="meetree-header">
             <h2>MeeTree</h2>
-            <button type="button" id="meetree-open-toggle">Open</button>
+            <button type="button" id="meetree-open-toggle">File</button>
             <button type="button" id="meetree-export-toggle">Export</button>
             <button type="button" id="meetree-search-toggle">Search</button>
         </header>
