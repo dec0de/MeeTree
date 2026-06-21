@@ -80,7 +80,7 @@
         return {
             format: 'meetree',
             version: 1,
-            source: { format: 'json', filename: 'tree.meetree.json' },
+            source: { format: 'json', filename: 'tree.mtre' },
             root: {
                 id: newId(),
                 title: '<Untitled node>',
@@ -279,7 +279,7 @@
         }
         document.format = 'meetree';
         document.version = 1;
-        document.source = document.source || { format: 'json', filename: 'tree.meetree.json' };
+        document.source = document.source || { format: 'json', filename: 'tree.mtre' };
         document.uiState = document.uiState && typeof document.uiState === 'object' && !Array.isArray(document.uiState) ? document.uiState : {};
         document.uiState.collapsedIds = Array.isArray(document.uiState.collapsedIds) ? document.uiState.collapsedIds.filter(id => ['string', 'number', 'boolean'].includes(typeof id)).map(String) : [];
         document.root = normaliseNode(document.root, 'Untitled');
@@ -316,7 +316,7 @@
         syncEditorToNode();
         documentData.format = 'meetree';
         documentData.version = 1;
-        documentData.source = documentData.source || { format: 'json', filename: 'tree.meetree.json' };
+        documentData.source = documentData.source || { format: 'json', filename: 'tree.mtre' };
         localStorage.setItem(storageKey, JSON.stringify(documentData));
         isDirty = false;
         isSaving = false;
@@ -333,7 +333,7 @@
             return;
         }
         documentData = emptyDocument();
-        documentData.source.filename = 'untitled.meetree.json';
+        documentData.source.filename = 'untitled.mtre';
         undoStack.length = 0;
         selectedId = documentData.root.id;
         loadCollapsedState();
@@ -434,13 +434,13 @@
     }
 
     function basenameWithoutKnownExtension(filename) {
-        return (filename || 'meetree').replace(/\.(meetree\.json|json|hjt|ctd)$/i, '');
+        return (filename || 'meetree').replace(/\.(mtre|meetree|meetree\.json|json|hjt|ctd)$/i, '');
     }
 
     function exportFilename(format) {
         const base = basenameWithoutKnownExtension(documentData.source && documentData.source.filename);
         if (format === 'json') {
-            return `${base}.meetree.json`;
+            return `${base}.mtre`;
         }
         return `${base}.${format}`;
     }
@@ -916,7 +916,7 @@
             if (file.name.toLowerCase().endsWith('.ctd')) {
                 documentData = decodeCtd(content);
                 documentData.source.filename = file.name;
-            } else if (file.name.toLowerCase().endsWith('.json')) {
+            } else if (/\.(mtre|meetree|meetree\.json|json)$/i.test(file.name)) {
                 documentData = normaliseDocument(JSON.parse(content));
                 documentData.source = documentData.source || { format: 'json', filename: file.name };
                 documentData.source.format = documentData.source.format || 'json';

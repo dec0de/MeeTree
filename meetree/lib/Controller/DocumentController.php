@@ -47,7 +47,7 @@ class DocumentController extends Controller {
 	 * @NoAdminRequired
 	 */
 	#[NoAdminRequired]
-	public function newTree(string $filename = 'untitled.meetree.json'): JSONResponse {
+	public function newTree(string $filename = 'untitled'): JSONResponse {
         return new JSONResponse($this->documentService->newTree($filename));
     }
 
@@ -124,7 +124,7 @@ class DocumentController extends Controller {
 	public function exportJson(string $path = ''): DataDownloadResponse {
         return new DataDownloadResponse(
             $this->documentService->exportJson($path),
-            'meetree.meetree.json',
+            'meetree.mtre',
             'application/json; charset=utf-8'
         );
     }

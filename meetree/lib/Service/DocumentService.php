@@ -13,7 +13,7 @@ use RuntimeException;
 
 class DocumentService {
     private const APP_FOLDER = 'MeeTree';
-    private const DOCUMENT_FILE = 'tree.meetree.json';
+    private const DOCUMENT_FILE = 'tree.mtre';
     private const STATE_FILE = 'state.json';
     private const OLD_APP_FOLDER = 'TreeMee';
     private const OLD_DOCUMENT_FILE = 'tree.treemee.json';
@@ -104,12 +104,12 @@ class DocumentService {
     public function newTree(string $filename): array {
         $filename = trim($filename);
         if ($filename === '') {
-            $filename = 'untitled.meetree.json';
+            $filename = 'untitled';
         }
         $filename = basename(str_replace('\\', '/', $filename));
-        $filename = preg_replace('/[^A-Za-z0-9._ -]+/', '-', $filename) ?: 'untitled.meetree.json';
-        if (!str_ends_with(strtolower($filename), '.meetree.json')) {
-            $filename = preg_replace('/\.(json|hjt|ctd)$/i', '', $filename) . '.meetree.json';
+        $filename = preg_replace('/[^A-Za-z0-9._ -]+/', '-', $filename) ?: 'untitled';
+        if (!str_ends_with(strtolower($filename), '.mtre')) {
+            $filename = preg_replace('/\.(mtre|meetree|meetree\.json|json|hjt|ctd)$/i', '', $filename) . '.mtre';
         }
 
         $path = $this->uniqueDocumentPath($this->joinPath('/' . self::APP_FOLDER, $filename));
@@ -210,7 +210,7 @@ class DocumentService {
         $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         if ($extension === 'ctd') {
             $document = $this->withMeta($this->ctdCodec->decode($content), 'ctd', $filename);
-        } elseif ($extension === 'json') {
+        } elseif ($extension === 'json' || $extension === 'mtre' || $extension === 'meetree') {
             $document = $this->decodeNativeJson($content);
         } else {
             $document = $this->withMeta($this->hjtCodec->decode($content), 'hjt', $filename);
@@ -436,7 +436,7 @@ class DocumentService {
                 continue;
             }
             $name = $node->getName();
-            if ($name === self::DOCUMENT_FILE || $name === self::STATE_FILE || !str_ends_with(strtolower($name), '.meetree.json')) {
+            if ($name === self::STATE_FILE || !$this->isNativeFilename($name)) {
                 continue;
             }
             if ($newestFile === null || $node->getMTime() > $newestFile->getMTime()) {
@@ -524,19 +524,19 @@ class DocumentService {
     }
 
     private function convertedFilename(string $filename): string {
-        return preg_replace('/\.(meetree\.json|json|hjt|ctd)$/i', '', $filename) . '.meetree.json';
+        return preg_replace('/\.(mtre|meetree|meetree\.json|json|hjt|ctd)$/i', '', $filename) . '.mtre';
     }
 
     private function uniqueDocumentPath(string $path): string {
         $path = $this->normalisePath($path);
         $parentPath = $this->parentPath($path);
         $filename = basename($path);
-        $base = preg_replace('/\.meetree\.json$/i', '', $filename) ?: 'untitled';
+        $base = preg_replace('/\.(mtre|meetree|meetree\.json)$/i', '', $filename) ?: 'untitled';
         $candidate = $path;
         $counter = 2;
 
         while ($this->pathExists($candidate)) {
-            $candidate = $this->joinPath($parentPath, $base . '-' . $counter . '.meetree.json');
+            $candidate = $this->joinPath($parentPath, $base . '-' . $counter . '.mtre');
             $counter++;
         }
 
@@ -560,7 +560,11 @@ class DocumentService {
         if ($filename === self::STATE_FILE) {
             return false;
         }
-        return preg_match('/\.(meetree\.json|json|hjt|ctd)$/i', $filename) === 1;
+        return preg_match('/\.(mtre|meetree|meetree\.json|json|hjt|ctd)$/i', $filename) === 1;
+    }
+
+    private function isNativeFilename(string $filename): bool {
+        return preg_match('/\.(mtre|meetree|meetree\.json)$/i', $filename) === 1;
     }
 
     private function formatFromFilename(string $filename): string {
@@ -571,7 +575,7 @@ class DocumentService {
         if (str_ends_with($lower, '.hjt')) {
             return 'hjt';
         }
-        if (str_ends_with($lower, '.json')) {
+        if (str_ends_with($lower, '.mtre') || str_ends_with($lower, '.meetree') || str_ends_with($lower, '.json')) {
             return 'json';
         }
         throw new RuntimeException('Unsupported file type: ' . $filename);

@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.17 - 2026-06-21
+
+### Changed
+
+- Use .mtre as the native MeeTree file extension while retaining support for existing native file extensions.
+
 ## 1.0.16 - 2026-06-21
 
 ### Added

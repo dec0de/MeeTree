@@ -224,7 +224,7 @@
         if (format === 'ctd') {
             return 'CTD';
         }
-        return 'MeeTree JSON';
+        return 'MeeTree';
     }
 
     function escapeHtml(value) {
@@ -590,7 +590,7 @@
         loadCollapsedState();
         updateExportFormatDefault();
         selectNode(documentData.root.id, false);
-        setStatus(`Loaded ${activeFilePath() || 'MeeTree/tree.meetree.json'}`);
+        setStatus(`Loaded ${activeFilePath() || 'MeeTree/tree.mtre'}`);
     }
 
     async function saveNow() {
@@ -638,7 +638,7 @@
     }
 
     async function createNewTree() {
-        const filename = window.prompt('New tree filename', 'untitled.meetree.json');
+        const filename = window.prompt('New tree name', 'untitled');
         if (filename === null) {
             return;
         }

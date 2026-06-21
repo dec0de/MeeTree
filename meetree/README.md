@@ -2,7 +2,7 @@
 
 MeeTree is a Nextcloud app for TreePad-style hierarchical notes.
 
-MeeTree stores its working copy as native JSON in each user's files at `MeeTree/tree.meetree.json`. It imports and exports compatibility formats around that native model.
+MeeTree stores its working copy as native JSON in each user's files at `MeeTree/tree.mtre`. It imports and exports compatibility formats around that native model.
 
 ## Features
 
