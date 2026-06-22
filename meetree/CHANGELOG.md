@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.6 - 2026-06-22
+
+### Added
+
+- Export the current branch as a standalone `.mtre` file from the existing Export menu.
+- Add Export menu helper text explaining branch export behavior.
+
 ## 1.1.5 - 2026-06-22
 
 ### Fixed

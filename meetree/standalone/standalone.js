@@ -503,6 +503,20 @@
         return `${base}.${format}`;
     }
 
+    function safeFilenamePart(value) {
+        const cleaned = String(value || 'branch').trim().replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ');
+        return (cleaned || 'branch').slice(0, 80);
+    }
+
+    function branchExportDocument(node) {
+        return {
+            version: documentData.version || 1,
+            root: clone(node),
+            uiState: { collapsedIds: [] },
+            source: { format: 'json', filename: `${safeFilenamePart(node.title)}.mtre` },
+        };
+    }
+
     function downloadFile(content, filename, type) {
         const blob = new Blob([content], { type });
         const url = URL.createObjectURL(blob);
@@ -511,6 +525,20 @@
         link.download = filename;
         link.click();
         URL.revokeObjectURL(url);
+    }
+
+    function exportSelectedBranchJson() {
+        syncEditorToNode();
+        const info = selectedInfo();
+        if (!info) {
+            setStatus('Select a branch to export');
+            return;
+        }
+
+        const branchDocument = branchExportDocument(info.node);
+        const filename = branchDocument.source.filename;
+        downloadFile(JSON.stringify(branchDocument, null, 2) + '\n', filename, 'application/json;charset=utf-8');
+        setStatus(`Exported branch ${info.node.title || 'Untitled'} as ${filename}`);
     }
 
     function syncEditorToNode() {
@@ -1007,7 +1035,7 @@
         } else if (format === 'ctd') {
             downloadFile(encodeCtd(documentData), exportFilename(format), 'application/xml;charset=utf-8');
         } else {
-            downloadFile(JSON.stringify(documentData, null, 2) + '\n', exportFilename(format), 'application/json;charset=utf-8');
+            exportSelectedBranchJson();
         }
     });
 

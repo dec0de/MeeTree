@@ -22,6 +22,7 @@
                 <option value="ctd">CherryTree CTD</option>
             </select>
             <button type="button" id="meetree-export">Export</button>
+            <p class="meetree-export-hint">MeeTree export downloads from the current branch position. HJT and CTD export the whole document.</p>
         </div>
         <div class="meetree-tree-actions" aria-label="Tree actions">
             <button type="button" id="meetree-add-node" title="New child node">+ Node</button>

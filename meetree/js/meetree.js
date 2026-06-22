@@ -259,6 +259,46 @@
         return `${OC.generateUrl(`/apps/meetree/export/${format}`)}${params}`;
     }
 
+    function safeFilenamePart(value) {
+        const cleaned = String(value || 'branch').trim().replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ');
+        return (cleaned || 'branch').slice(0, 80);
+    }
+
+    function branchExportDocument(node) {
+        return {
+            version: documentData.version || 1,
+            root: clone(node),
+            uiState: { collapsedIds: [] },
+            source: { format: 'json', filename: `${safeFilenamePart(node.title)}.mtre` },
+        };
+    }
+
+    function downloadFile(content, filename, type) {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+    }
+
+    function exportSelectedBranchJson() {
+        syncEditorToNode();
+        const info = selectedInfo();
+        if (!info) {
+            setStatus('Select a branch to export');
+            return;
+        }
+
+        const branchDocument = branchExportDocument(info.node);
+        const filename = branchDocument.source.filename;
+        downloadFile(JSON.stringify(branchDocument, null, 2) + '\n', filename, 'application/json;charset=utf-8');
+        setStatus(`Exported branch ${info.node.title || 'Untitled'} as ${filename}`);
+    }
+
     function formatLabel(format) {
         if (format === 'hjt') {
             return 'HJT';
@@ -828,6 +868,10 @@
 
     document.getElementById('meetree-export').addEventListener('click', async () => {
         await saveNow();
+        if (exportFormatEl.value === 'json') {
+            exportSelectedBranchJson();
+            return;
+        }
         window.location.href = exportUrl(exportFormatEl.value);
     });
 
