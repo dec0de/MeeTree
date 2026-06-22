@@ -7,9 +7,10 @@ MeeTree stores its working copy as native JSON in each user's files at `MeeTree/
 ## Features
 
 - Tree note navigation with a Jreepad-inspired split layout
-- Edit node title and content
+- Edit node title and Markdown content with Edit/Preview modes
 - Add child nodes and delete non-root nodes
-- Import `.hjt` files
+- Create new `.mtre` tree files from the File menu
+- Import `.mtre`, `.hjt`, `.ctd`, and JSON files
 - Import CherryTree `.ctd` XML files
 - Export JSON, `.hjt`, and `.ctd` files
 - Search titles, content, case-sensitive text, and regular expressions
@@ -32,7 +33,11 @@ python3 -m http.server 8080
 
 Then visit `http://localhost:8080/meetree/standalone/` from the repository root. The standalone preview saves data to browser `localStorage` and supports local HJT import/export, but it does not test Nextcloud routing, authentication, or file storage.
 
-## Format Notes
+## File Formats
+
+MeeTree's native extension is `.mtre`. The file contents are JSON so advanced users can inspect or repair files with a text editor.
+
+MeeTree also reads older native filenames such as `.meetree` and `.meetree.json` for compatibility.
 
 MeeTree writes TreePad 2.7 Lite-style HJT:
 
@@ -52,8 +57,6 @@ CherryTree `.ctd` XML has first-pass plain text support. CherryTree `.ctb` SQLit
 
 The Nextcloud App Store archive must contain one top-level folder named `meetree`, matching the app id in `appinfo/info.xml`.
 
-Before publishing, update the placeholder `website`, `repository`, `bugs`, and `documentation` URLs in `appinfo/info.xml` to the real public repository.
-
 Create a release archive from the repository root with:
 
 ```sh
@@ -63,5 +66,5 @@ Create a release archive from the repository root with:
 Then sign the generated archive with the app certificate private key:
 
 ```sh
-openssl dgst -sha512 -sign ~/.nextcloud/certificates/meetree.key build/meetree-0.1.0.tar.gz | openssl base64
+openssl dgst -sha512 -sign ~/.nextcloud/certificates/meetree.key build/meetree-1.0.18.tar.gz | openssl base64
 ```
