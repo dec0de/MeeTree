@@ -19,6 +19,8 @@ tar \
   --exclude='*.crt' \
   -cf - "${APP_ID}" | tar -xf - -C "${BUILD_DIR}"
 
+cp README.md "${BUILD_DIR}/${APP_ID}/README.md"
+
 tar -czf "${ARCHIVE}" -C "${BUILD_DIR}" "${APP_ID}"
 
 printf '%s\n' "Created ${ARCHIVE}"

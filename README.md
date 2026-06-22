@@ -80,7 +80,7 @@ The archive contains one top-level folder named `meetree`, matching the app id i
 After the Nextcloud app certificate is issued, sign the generated archive with the app certificate private key:
 
 ```sh
-openssl dgst -sha512 -sign ~/.nextcloud/certificates/meetree.key build/meetree-1.0.19.tar.gz | openssl base64
+openssl dgst -sha512 -sign ~/.nextcloud/certificates/meetree.key build/meetree-1.0.20.tar.gz | openssl base64
 ```
 
 Use the resulting signature and GitHub release archive URL when uploading the release to the Nextcloud App Store.

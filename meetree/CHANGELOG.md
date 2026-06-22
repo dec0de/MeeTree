@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.20 - 2026-06-22
+
+### Changed
+
+- Use the repository root README as the single documentation source for release archives.
+
 ## 1.0.19 - 2026-06-22
 
 ### Fixed
