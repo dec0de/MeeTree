@@ -306,7 +306,8 @@
 
 .meetree-mode-button.active {
     border-color: var(--color-primary-element, var(--color-border));
-    color: var(--color-main-text, var(--color-text-maxcontrast));
+    background: var(--color-primary-element, var(--color-background-hover));
+    color: var(--color-primary-element-text, var(--color-main-text));
 }
 
 #meetree-node-content,

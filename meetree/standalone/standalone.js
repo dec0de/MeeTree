@@ -263,6 +263,7 @@
         contentEl.hidden = preview;
         previewEl.hidden = !preview;
         editModeButton.classList.toggle('active', !preview);
+        editModeButton.textContent = preview ? 'Edit' : 'Preview';
         editModeButton.setAttribute('aria-pressed', preview ? 'false' : 'true');
         editModeButton.title = preview ? 'Switch to edit mode' : 'Switch to preview mode';
     }

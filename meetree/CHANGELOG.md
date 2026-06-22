@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.5 - 2026-06-22
+
+### Fixed
+
+- Set the app navigation icon foreground to white.
+- Update the editor mode button label and active styling when toggling between preview and edit mode.
+
 ## 1.1.4 - 2026-06-22
 
 ### Fixed
