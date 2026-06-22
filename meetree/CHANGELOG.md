@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.19 - 2026-06-22
+
+### Fixed
+
+- Clarify where new, imported, opened, and converted MeeTree files are saved.
+
 ## 1.0.18 - 2026-06-22
 
 ### Fixed
