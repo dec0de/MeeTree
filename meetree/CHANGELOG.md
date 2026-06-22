@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.18 - 2026-06-22
+
+### Fixed
+
+- Point App Store metadata links to the public MeeTree repository.
+
 ## 1.0.17 - 2026-06-21
 
 ### Changed
