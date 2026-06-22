@@ -7,9 +7,10 @@ MeeTree stores notes as native `.mtre` files containing JSON. It imports and exp
 ## Features
 
 - Tree note navigation with a Jreepad-inspired split layout
-- Edit node title and Markdown content with Edit/Preview modes
+- Edit node title and Markdown content with a toggleable Edit mode
 - Add child nodes and delete non-root nodes
 - Drag and drop nodes before, after, or inside other nodes
+- Expand or collapse the whole tree from the tree toolbar
 - Undo tree add, delete, move, and sort actions
 - Remember collapsed and expanded branches per document
 - Create new `.mtre` tree files from the File menu
@@ -43,7 +44,7 @@ MeeTree's native extension is `.mtre`. The file contents are JSON so advanced us
 
 ## Markdown Content
 
-Node content is plain Markdown text with `Edit` and `Preview` modes. MeeTree supports common Markdown formatting such as headings, bold and italic text, links, lists, task lists, blockquotes, inline code, fenced code blocks, horizontal rules, and line breaks.
+Node content is plain Markdown text. MeeTree opens nodes in preview mode by default; press `Edit` to toggle editing. MeeTree supports common Markdown formatting such as headings, bold and italic text, links, lists, task lists, blockquotes, inline code, fenced code blocks, horizontal rules, and line breaks.
 
 ## Storage Behavior
 
@@ -90,7 +91,7 @@ The archive contains one top-level folder named `meetree`, matching the app id i
 After the Nextcloud app certificate is issued, sign the generated archive with the app certificate private key:
 
 ```sh
-openssl dgst -sha512 -sign ~/.nextcloud/certificates/meetree.key build/meetree-1.0.22.tar.gz | openssl base64
+openssl dgst -sha512 -sign ~/.nextcloud/certificates/meetree.key build/meetree-1.0.23.tar.gz | openssl base64
 ```
 
 Use the resulting signature and GitHub release archive URL when uploading the release to the Nextcloud App Store.

@@ -14,7 +14,6 @@
     const contentEl = document.getElementById('meetree-node-content');
     const previewEl = document.getElementById('meetree-node-preview');
     const editModeButton = document.getElementById('meetree-edit-mode');
-    const previewModeButton = document.getElementById('meetree-preview-mode');
     const statusEl = document.getElementById('meetree-status');
     const saveStateEl = document.getElementById('meetree-save-state');
     const openMenu = document.getElementById('meetree-open-menu');
@@ -36,7 +35,7 @@
     let isSaving = false;
     let saveQueued = false;
     let currentFileBrowserPath = '/';
-    let editorMode = 'edit';
+    let editorMode = 'preview';
     const undoStack = [];
     const collapsedIds = new Set();
 
@@ -153,6 +152,22 @@
     function collapseSubtree(node) {
         collapsedIds.add(node.id);
         (node.children || []).forEach(child => collapseSubtree(child));
+    }
+
+    function expandAllNodes() {
+        collapsedIds.clear();
+        saveCollapsedState();
+        renderTree();
+        markDirty(true);
+        setStatus('Expanded whole tree');
+    }
+
+    function collapseAllNodes() {
+        collapseSubtree(documentData.root);
+        saveCollapsedState();
+        renderTree();
+        markDirty(true);
+        setStatus('Collapsed whole tree');
     }
 
     function loadCollapsedState() {
@@ -374,7 +389,8 @@
         contentEl.hidden = preview;
         previewEl.hidden = !preview;
         editModeButton.classList.toggle('active', !preview);
-        previewModeButton.classList.toggle('active', preview);
+        editModeButton.setAttribute('aria-pressed', preview ? 'false' : 'true');
+        editModeButton.title = preview ? 'Switch to edit mode' : 'Switch to preview mode';
     }
 
     function makeFileRow(className, onActivate) {
@@ -590,6 +606,7 @@
         loadCollapsedState();
         updateExportFormatDefault();
         selectNode(documentData.root.id, false);
+        setEditorMode('preview');
         setStatus(`Loaded ${activeFilePath() || 'MeeTree/tree.mtre'}`);
     }
 
@@ -658,6 +675,7 @@
         loadCollapsedState();
         updateExportFormatDefault();
         selectNode(documentData.root.id, false);
+        setEditorMode('preview');
         isDirty = false;
         setSaveState('Saved');
         openMenu.hidden = true;
@@ -700,6 +718,8 @@
 
     document.getElementById('meetree-sort-asc').addEventListener('click', () => sortSelectedChildren('asc'));
     document.getElementById('meetree-sort-desc').addEventListener('click', () => sortSelectedChildren('desc'));
+    document.getElementById('meetree-expand-all').addEventListener('click', expandAllNodes);
+    document.getElementById('meetree-collapse-all').addEventListener('click', collapseAllNodes);
 
     document.getElementById('meetree-delete-node').addEventListener('click', () => {
         const info = selectedInfo();
@@ -735,8 +755,7 @@
     titleEl.addEventListener('blur', () => saveNow());
     contentEl.addEventListener('blur', () => saveNow());
 
-    editModeButton.addEventListener('click', () => setEditorMode('edit'));
-    previewModeButton.addEventListener('click', () => setEditorMode('preview'));
+    editModeButton.addEventListener('click', () => setEditorMode(editorMode === 'edit' ? 'preview' : 'edit'));
 
     document.getElementById('meetree-new-tree').addEventListener('click', () => {
         createNewTree().catch(error => setStatus(error.message));
@@ -759,6 +778,7 @@
         loadCollapsedState();
         updateExportFormatDefault();
         selectNode(documentData.root.id, false);
+        setEditorMode('preview');
         isDirty = false;
         setSaveState('Saved');
         setStatus(`Imported ${file.name}`);
@@ -831,6 +851,7 @@
         loadCollapsedState();
         updateExportFormatDefault();
         selectNode(documentData.root.id, false);
+        setEditorMode('preview');
         isDirty = false;
         setSaveState('Saved');
         filePanel.hidden = true;

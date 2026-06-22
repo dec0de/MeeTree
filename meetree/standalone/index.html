@@ -94,6 +94,8 @@
                 <button type="button" id="meetree-delete-node">Delete</button>
                 <button type="button" id="meetree-sort-asc">Sort A-Z</button>
                 <button type="button" id="meetree-sort-desc">Sort Z-A</button>
+                <button type="button" id="meetree-expand-all">Expand</button>
+                <button type="button" id="meetree-collapse-all">Collapse</button>
                 <button type="button" id="meetree-undo" title="Undo last tree change">↶</button>
             </div>
             <nav id="meetree-tree" class="meetree-tree" aria-label="MeeTree document tree"></nav>
@@ -102,8 +104,7 @@
         <main class="meetree-editor">
             <div class="meetree-editor-toolbar">
                 <input id="meetree-node-title" type="text" placeholder="Node title">
-                <button type="button" id="meetree-edit-mode" class="meetree-mode-button active">Edit</button>
-                <button type="button" id="meetree-preview-mode" class="meetree-mode-button">Preview</button>
+                <button type="button" id="meetree-edit-mode" class="meetree-mode-button" aria-pressed="false" title="Switch to edit mode">Edit</button>
                 <span id="meetree-save-state" class="meetree-save-state">Saved</span>
             </div>
             <textarea id="meetree-node-content" spellcheck="true" placeholder="Write Markdown content here"></textarea>

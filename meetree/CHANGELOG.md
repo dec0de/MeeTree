@@ -2,6 +2,16 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.23 - 2026-06-22
+
+### Changed
+
+- Replace separate Markdown Edit and Preview buttons with a single Edit toggle that defaults to preview mode.
+
+### Added
+
+- Add whole-tree Expand and Collapse actions to the tree toolbar.
+
 ## 1.0.22 - 2026-06-22
 
 ### Fixed
