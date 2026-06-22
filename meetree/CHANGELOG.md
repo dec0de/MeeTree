@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.24 - 2026-06-22
+
+### Changed
+
+- Debounce saving expand/collapse UI state to reduce autosave writes while browsing the tree.
+
 ## 1.0.23 - 2026-06-22
 
 ### Changed

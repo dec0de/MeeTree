@@ -31,7 +31,9 @@
     let selectedId = null;
     let draggedNodeId = null;
     let saveTimer = null;
+    let uiStateTimer = null;
     let isDirty = false;
+    let uiStateDirty = false;
     let isSaving = false;
     let saveQueued = false;
     let currentFileBrowserPath = '/';
@@ -111,6 +113,14 @@
         saveTimer = setTimeout(() => saveNow(), immediate ? 0 : 1000);
     }
 
+    function markUiStateDirty() {
+        uiStateDirty = true;
+        if (uiStateTimer) {
+            clearTimeout(uiStateTimer);
+        }
+        uiStateTimer = setTimeout(() => saveNow(), 5000);
+    }
+
     function headers(extra) {
         return Object.assign({
             'Content-Type': 'application/json',
@@ -158,7 +168,7 @@
         collapsedIds.clear();
         saveCollapsedState();
         renderTree();
-        markDirty(true);
+        markUiStateDirty();
         setStatus('Expanded whole tree');
     }
 
@@ -166,7 +176,7 @@
         collapseSubtree(documentData.root);
         saveCollapsedState();
         renderTree();
-        markDirty(true);
+        markUiStateDirty();
         setStatus('Collapsed whole tree');
     }
 
@@ -551,7 +561,7 @@
                         collapseSubtree(node);
                     }
                     saveCollapsedState();
-                    markDirty(true);
+                    markUiStateDirty();
                     renderTree();
                 });
                 row.appendChild(toggle);
@@ -607,6 +617,8 @@
         updateExportFormatDefault();
         selectNode(documentData.root.id, false);
         setEditorMode('preview');
+        uiStateDirty = false;
+        isDirty = false;
         setStatus(`Loaded ${activeFilePath() || 'MeeTree/tree.mtre'}`);
     }
 
@@ -614,6 +626,10 @@
         if (saveTimer) {
             clearTimeout(saveTimer);
             saveTimer = null;
+        }
+        if (uiStateTimer) {
+            clearTimeout(uiStateTimer);
+            uiStateTimer = null;
         }
         if (!documentData) {
             return;
@@ -623,7 +639,7 @@
             return;
         }
         syncEditorToNode();
-        if (!isDirty) {
+        if (!isDirty && !uiStateDirty) {
             setSaveState('Saved');
             return;
         }
@@ -640,6 +656,7 @@
                 throw new Error(await responseErrorMessage(response, `Save failed (${response.status})`));
             }
             isDirty = false;
+            uiStateDirty = false;
             setSaveState('Saved');
             setStatus(`Saved ${activeFilePath() || 'document'}`);
         } catch (error) {
@@ -649,7 +666,11 @@
             isSaving = false;
             if (saveQueued) {
                 saveQueued = false;
-                markDirty(true);
+                if (uiStateDirty) {
+                    markUiStateDirty();
+                } else {
+                    markDirty(true);
+                }
             }
         }
     }
@@ -676,6 +697,7 @@
         updateExportFormatDefault();
         selectNode(documentData.root.id, false);
         setEditorMode('preview');
+        uiStateDirty = false;
         isDirty = false;
         setSaveState('Saved');
         openMenu.hidden = true;
@@ -779,6 +801,7 @@
         updateExportFormatDefault();
         selectNode(documentData.root.id, false);
         setEditorMode('preview');
+        uiStateDirty = false;
         isDirty = false;
         setSaveState('Saved');
         setStatus(`Imported ${file.name}`);
@@ -852,6 +875,7 @@
         updateExportFormatDefault();
         selectNode(documentData.root.id, false);
         setEditorMode('preview');
+        uiStateDirty = false;
         isDirty = false;
         setSaveState('Saved');
         filePanel.hidden = true;
@@ -1004,6 +1028,10 @@
     });
 
     window.addEventListener('beforeunload', event => {
+        if (uiStateDirty && !isDirty && !isSaving && !saveQueued) {
+            saveNow();
+            return;
+        }
         if (isDirty || isSaving || saveQueued) {
             saveNow();
             event.preventDefault();

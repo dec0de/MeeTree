@@ -24,7 +24,9 @@
     let selectedId = documentData.root.id;
     let draggedNodeId = null;
     let saveTimer = null;
+    let uiStateTimer = null;
     let isDirty = false;
+    let uiStateDirty = false;
     let isSaving = false;
     let saveQueued = false;
     let editorMode = 'preview';
@@ -104,6 +106,14 @@
             clearTimeout(saveTimer);
         }
         saveTimer = setTimeout(() => saveNow(), immediate ? 0 : 1000);
+    }
+
+    function markUiStateDirty() {
+        uiStateDirty = true;
+        if (uiStateTimer) {
+            clearTimeout(uiStateTimer);
+        }
+        uiStateTimer = setTimeout(() => saveNow(), 5000);
     }
 
     function escapeHtml(value) {
@@ -307,8 +317,16 @@
             clearTimeout(saveTimer);
             saveTimer = null;
         }
+        if (uiStateTimer) {
+            clearTimeout(uiStateTimer);
+            uiStateTimer = null;
+        }
         if (isSaving) {
             saveQueued = true;
+            return;
+        }
+        if (!isDirty && !uiStateDirty) {
+            setSaveState('Saved');
             return;
         }
         isSaving = true;
@@ -319,12 +337,17 @@
         documentData.source = documentData.source || { format: 'json', filename: 'tree.mtre' };
         localStorage.setItem(storageKey, JSON.stringify(documentData));
         isDirty = false;
+        uiStateDirty = false;
         isSaving = false;
         renderTree();
         setSaveState('Saved');
         if (saveQueued) {
             saveQueued = false;
-            markDirty(true);
+            if (uiStateDirty) {
+                markUiStateDirty();
+            } else {
+                markDirty(true);
+            }
         }
     }
 
@@ -386,7 +409,7 @@
         collapsedIds.clear();
         saveCollapsedState();
         renderTree();
-        markDirty(true);
+        markUiStateDirty();
         setStatus('Expanded whole tree');
     }
 
@@ -394,7 +417,7 @@
         collapseSubtree(documentData.root);
         saveCollapsedState();
         renderTree();
-        markDirty(true);
+        markUiStateDirty();
         setStatus('Collapsed whole tree');
     }
 
@@ -615,7 +638,7 @@
                         collapseSubtree(node);
                     }
                     saveCollapsedState();
-                    markDirty(true);
+                    markUiStateDirty();
                     renderTree();
                 });
                 row.appendChild(toggle);
@@ -1037,7 +1060,7 @@
     setEditorMode('preview');
     setSaveState('Saved');
     window.addEventListener('beforeunload', () => {
-        if (isDirty) {
+        if (isDirty || uiStateDirty) {
             saveNow();
         }
     });
