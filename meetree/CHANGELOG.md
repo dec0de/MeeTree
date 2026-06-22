@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.25 - 2026-06-22
+
+### Fixed
+
+- Clarify that the App Store signing private key must stay local and secret.
+
 ## 1.0.24 - 2026-06-22
 
 ### Changed
