@@ -75,23 +75,3 @@ Content
 ```
 
 CherryTree `.ctd` XML has first-pass plain text support. CherryTree `.ctb` SQLite, encrypted `.ctz/.ctx`, and Jreepad `.jree` are not implemented yet.
-
-## GitHub Releases
-
-Create a release archive from the repository root with:
-
-```sh
-./meetree/scripts/package-release.sh
-```
-
-The archive contains one top-level folder named `meetree`, matching the app id in `meetree/appinfo/info.xml`.
-
-## App Store Release
-
-After the Nextcloud app certificate is issued, keep the private key local and secret. Use it only to generate the release signature:
-
-```sh
-openssl dgst -sha512 -sign ~/.nextcloud/certificates/meetree.key build/meetree-1.0.25.tar.gz | openssl base64
-```
-
-Only the generated signature and GitHub release archive URL are uploaded to the Nextcloud App Store. Never upload or commit `meetree.key`.

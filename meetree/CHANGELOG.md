@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.0 - 2026-06-22
+
+### Changed
+
+- Remove maintainer-only release signing instructions from the public README.
+
 ## 1.0.25 - 2026-06-22
 
 ### Fixed
