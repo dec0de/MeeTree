@@ -2,6 +2,18 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.2 - 2026-06-22
+
+### Fixed
+
+- Ensure toolbar Expand and Collapse only target the selected branch and no longer fall back to the whole tree.
+
+## 1.1.1 - 2026-06-22
+
+### Changed
+
+- Make toolbar Expand and Collapse operate on the current tree branch instead of always targeting the whole tree.
+
 ## 1.1.0 - 2026-06-22
 
 ### Changed

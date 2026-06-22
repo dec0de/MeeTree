@@ -164,20 +164,37 @@
         (node.children || []).forEach(child => collapseSubtree(child));
     }
 
-    function expandAllNodes() {
-        collapsedIds.clear();
-        saveCollapsedState();
-        renderTree();
-        markUiStateDirty();
-        setStatus('Expanded whole tree');
+    function expandSubtree(node) {
+        collapsedIds.delete(node.id);
+        (node.children || []).forEach(child => expandSubtree(child));
     }
 
-    function collapseAllNodes() {
-        collapseSubtree(documentData.root);
+    function expandSelectedBranch() {
+        const info = selectedInfo();
+        if (!info) {
+            setStatus('Select a branch to expand');
+            return;
+        }
+        const node = info.node;
+        expandSubtree(node);
         saveCollapsedState();
         renderTree();
         markUiStateDirty();
-        setStatus('Collapsed whole tree');
+        setStatus(node.id === documentData.root.id ? 'Expanded whole tree' : 'Expanded branch');
+    }
+
+    function collapseSelectedBranch() {
+        const info = selectedInfo();
+        if (!info) {
+            setStatus('Select a branch to collapse');
+            return;
+        }
+        const node = info.node;
+        collapseSubtree(node);
+        saveCollapsedState();
+        renderTree();
+        markUiStateDirty();
+        setStatus(node.id === documentData.root.id ? 'Collapsed whole tree' : 'Collapsed branch');
     }
 
     function loadCollapsedState() {
@@ -555,6 +572,7 @@
                 toggle.title = isCollapsed ? 'Expand branch' : 'Collapse branch';
                 toggle.addEventListener('click', event => {
                     event.stopPropagation();
+                    selectNode(node.id);
                     if (collapsedIds.has(node.id)) {
                         collapsedIds.delete(node.id);
                     } else {
@@ -740,8 +758,8 @@
 
     document.getElementById('meetree-sort-asc').addEventListener('click', () => sortSelectedChildren('asc'));
     document.getElementById('meetree-sort-desc').addEventListener('click', () => sortSelectedChildren('desc'));
-    document.getElementById('meetree-expand-all').addEventListener('click', expandAllNodes);
-    document.getElementById('meetree-collapse-all').addEventListener('click', collapseAllNodes);
+    document.getElementById('meetree-expand-all').addEventListener('click', expandSelectedBranch);
+    document.getElementById('meetree-collapse-all').addEventListener('click', collapseSelectedBranch);
 
     document.getElementById('meetree-delete-node').addEventListener('click', () => {
         const info = selectedInfo();
