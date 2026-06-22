@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.8 - 2026-06-22
+
+### Added
+
+- Add GitHub Actions packaging for MeeTree release archives.
+- Publish the packaged app archive as a GitHub Release asset when pushing version tags.
+
 ## 1.1.7 - 2026-06-22
 
 ### Fixed
