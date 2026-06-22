@@ -241,7 +241,7 @@
                 paragraph.push(lines[i].trim());
                 i++;
             }
-            html.push(`<p>${renderInlineMarkdown(paragraph.join('\n')).replace(/\n/g, '<br>')}</p>`);
+            html.push(`<p>${renderInlineMarkdown(paragraph.join(' '))}</p>`);
         }
 
         return html.join('\n');

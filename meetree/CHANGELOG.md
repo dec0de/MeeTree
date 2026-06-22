@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.7 - 2026-06-22
+
+### Fixed
+
+- Restore the Undo button as a clearly labeled toolbar action.
+- Render Markdown paragraphs from blank-line separated text instead of treating every line break as HTML-style `<br>` output.
+
 ## 1.1.6 - 2026-06-22
 
 ### Added

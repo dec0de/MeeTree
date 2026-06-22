@@ -121,6 +121,13 @@
     font-size: 12px;
 }
 
+.meetree-tree-actions .meetree-undo-button {
+    margin-left: auto;
+    border-color: var(--color-primary-element, var(--color-border));
+    color: var(--color-main-text, var(--color-text-maxcontrast));
+    font-weight: 600;
+}
+
 #meetree-import-file {
     display: none;
 }

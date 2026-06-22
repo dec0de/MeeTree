@@ -31,7 +31,7 @@
             <button type="button" id="meetree-sort-desc">Sort Z-A</button>
             <button type="button" id="meetree-expand-all" title="Expand selected branch">Expand</button>
             <button type="button" id="meetree-collapse-all" title="Collapse selected branch">Collapse</button>
-            <button type="button" id="meetree-undo" title="Undo last tree change">↶</button>
+            <button type="button" id="meetree-undo" class="meetree-undo-button" title="Undo last tree structure change">↶ Undo</button>
         </div>
         <nav id="meetree-tree" class="meetree-tree" aria-label="MeeTree document tree"></nav>
     </aside>
