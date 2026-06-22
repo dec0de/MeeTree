@@ -41,6 +41,10 @@ Then visit `http://localhost:8080/meetree/standalone/`. The standalone preview s
 
 MeeTree's native extension is `.mtre`. The file contents are JSON so advanced users can inspect or repair files with a text editor.
 
+## Markdown Content
+
+Node content is plain Markdown text with `Edit` and `Preview` modes. MeeTree supports common Markdown formatting such as headings, bold and italic text, links, lists, task lists, blockquotes, inline code, fenced code blocks, horizontal rules, and line breaks.
+
 ## Storage Behavior
 
 New trees are created in `/MeeTree/` by default, for example `/MeeTree/untitled.mtre`.
@@ -86,7 +90,7 @@ The archive contains one top-level folder named `meetree`, matching the app id i
 After the Nextcloud app certificate is issued, sign the generated archive with the app certificate private key:
 
 ```sh
-openssl dgst -sha512 -sign ~/.nextcloud/certificates/meetree.key build/meetree-1.0.21.tar.gz | openssl base64
+openssl dgst -sha512 -sign ~/.nextcloud/certificates/meetree.key build/meetree-1.0.22.tar.gz | openssl base64
 ```
 
 Use the resulting signature and GitHub release archive URL when uploading the release to the Nextcloud App Store.

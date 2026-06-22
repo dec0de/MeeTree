@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.22 - 2026-06-22
+
+### Fixed
+
+- Document Markdown content preview support in the README and app metadata.
+
 ## 1.0.21 - 2026-06-22
 
 ### Changed
