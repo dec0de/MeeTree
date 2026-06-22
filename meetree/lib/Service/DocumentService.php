@@ -109,7 +109,7 @@ class DocumentService {
         $filename = basename(str_replace('\\', '/', $filename));
         $filename = preg_replace('/[^A-Za-z0-9._ -]+/', '-', $filename) ?: 'untitled';
         if (!str_ends_with(strtolower($filename), '.mtre')) {
-            $filename = preg_replace('/\.(mtre|meetree|meetree\.json|json|hjt|ctd)$/i', '', $filename) . '.mtre';
+            $filename = preg_replace('/\.(mtre|json|hjt|ctd)$/i', '', $filename) . '.mtre';
         }
 
         $path = $this->uniqueDocumentPath($this->joinPath('/' . self::APP_FOLDER, $filename));
@@ -210,7 +210,7 @@ class DocumentService {
         $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         if ($extension === 'ctd') {
             $document = $this->withMeta($this->ctdCodec->decode($content), 'ctd', $filename);
-        } elseif ($extension === 'json' || $extension === 'mtre' || $extension === 'meetree') {
+        } elseif ($extension === 'json' || $extension === 'mtre') {
             $document = $this->decodeNativeJson($content);
         } else {
             $document = $this->withMeta($this->hjtCodec->decode($content), 'hjt', $filename);
@@ -524,14 +524,14 @@ class DocumentService {
     }
 
     private function convertedFilename(string $filename): string {
-        return preg_replace('/\.(mtre|meetree|meetree\.json|json|hjt|ctd)$/i', '', $filename) . '.mtre';
+        return preg_replace('/\.(mtre|json|hjt|ctd)$/i', '', $filename) . '.mtre';
     }
 
     private function uniqueDocumentPath(string $path): string {
         $path = $this->normalisePath($path);
         $parentPath = $this->parentPath($path);
         $filename = basename($path);
-        $base = preg_replace('/\.(mtre|meetree|meetree\.json)$/i', '', $filename) ?: 'untitled';
+        $base = preg_replace('/\.mtre$/i', '', $filename) ?: 'untitled';
         $candidate = $path;
         $counter = 2;
 
@@ -560,11 +560,11 @@ class DocumentService {
         if ($filename === self::STATE_FILE) {
             return false;
         }
-        return preg_match('/\.(mtre|meetree|meetree\.json|json|hjt|ctd)$/i', $filename) === 1;
+        return preg_match('/\.(mtre|json|hjt|ctd)$/i', $filename) === 1;
     }
 
     private function isNativeFilename(string $filename): bool {
-        return preg_match('/\.(mtre|meetree|meetree\.json)$/i', $filename) === 1;
+        return preg_match('/\.mtre$/i', $filename) === 1;
     }
 
     private function formatFromFilename(string $filename): string {
@@ -575,7 +575,7 @@ class DocumentService {
         if (str_ends_with($lower, '.hjt')) {
             return 'hjt';
         }
-        if (str_ends_with($lower, '.mtre') || str_ends_with($lower, '.meetree') || str_ends_with($lower, '.json')) {
+        if (str_ends_with($lower, '.mtre') || str_ends_with($lower, '.json')) {
             return 'json';
         }
         throw new RuntimeException('Unsupported file type: ' . $filename);

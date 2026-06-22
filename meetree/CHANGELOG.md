@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.0.21 - 2026-06-22
+
+### Changed
+
+- Clarify local import versus Nextcloud open storage behavior in the README.
+- Remove pre-release native filename compatibility for .meetree and .meetree.json.
+
 ## 1.0.20 - 2026-06-22
 
 ### Changed

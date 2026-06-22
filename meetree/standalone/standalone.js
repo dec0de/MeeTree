@@ -434,7 +434,7 @@
     }
 
     function basenameWithoutKnownExtension(filename) {
-        return (filename || 'meetree').replace(/\.(mtre|meetree|meetree\.json|json|hjt|ctd)$/i, '');
+        return (filename || 'meetree').replace(/\.(mtre|json|hjt|ctd)$/i, '');
     }
 
     function exportFilename(format) {
@@ -916,7 +916,7 @@
             if (file.name.toLowerCase().endsWith('.ctd')) {
                 documentData = decodeCtd(content);
                 documentData.source.filename = file.name;
-            } else if (/\.(mtre|meetree|meetree\.json|json)$/i.test(file.name)) {
+            } else if (/\.(mtre|json)$/i.test(file.name)) {
                 documentData = normaliseDocument(JSON.parse(content));
                 documentData.source = documentData.source || { format: 'json', filename: file.name };
                 documentData.source.format = documentData.source.format || 'json';
