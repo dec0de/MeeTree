@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.4 - 2026-06-22
+
+### Fixed
+
+- Restore the app navigation icon as a black source SVG so Nextcloud can render it through its app bar icon filter.
+
 ## 1.1.3 - 2026-06-22
 
 ### Fixed
