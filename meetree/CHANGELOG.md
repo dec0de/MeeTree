@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.3 - 2026-06-22
+
+### Fixed
+
+- Use a white foreground for the app navigation icon so it matches the Nextcloud app bar.
+
 ## 1.1.2 - 2026-06-22
 
 ### Fixed
