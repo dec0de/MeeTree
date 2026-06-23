@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.11 - 2026-06-23
+
+### Added
+
+- Add a local helper script for generating Nextcloud App Store registration and release signatures.
+- Document the Nextcloud App Store registration and release upload flow.
+
 ## 1.1.10 - 2026-06-23
 
 ### Added

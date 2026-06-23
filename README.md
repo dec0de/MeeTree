@@ -34,6 +34,24 @@ GitHub Actions builds `build/meetree-<version>.tar.gz` on pushes to `main` and m
 
 Tagged release archives are signed when the repository secret `MEETREE_SIGNING_KEY` contains the private key that matches `meetree/appinfo/certificate.crt`. When that secret is configured, GitHub releases include both `meetree-<version>.tar.gz` and `meetree-<version>.tar.gz.sig` for Nextcloud App Store uploads. Never commit the private key.
 
+## Publish To Nextcloud App Store
+
+MeeTree uses app id `meetree`. The public certificate is committed at `meetree/appinfo/certificate.crt`; the matching private key must stay local, usually at `~/.nextcloud/certificates/meetree.key`.
+
+Register the app at <https://apps.nextcloud.com/developer/apps/new>. Paste the public certificate and generate the app ownership signature locally:
+
+```sh
+echo -n "meetree" | openssl dgst -sha512 -sign ~/.nextcloud/certificates/meetree.key | openssl base64
+```
+
+Upload releases at <https://apps.nextcloud.com/developer/apps/releases/new>. Use the GitHub release archive URL and the matching archive signature. To generate both signatures locally for the current version, run:
+
+```sh
+./meetree/scripts/appstore-signatures.sh
+```
+
+The script writes `build/meetree-<version>.tar.gz.sig` and prints the signatures needed by the App Store forms.
+
 ## Standalone Preview
 
 To preview the interface without Nextcloud, open `meetree/standalone/index.html` in a browser or serve the repository root locally:
