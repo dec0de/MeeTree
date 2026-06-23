@@ -29,6 +29,7 @@ jobs:
           sh meetree/scripts/package-release.sh
           version="$(grep -m1 '<version>' meetree/appinfo/info.xml | sed -E 's/.*<version>([^<]+)<\/version>.*/\1/')"
           archive="build/meetree-${version}.tar.gz"
+          signature="${archive}.sig"
           if [ -n "${MEETREE_SIGNING_KEY}" ]; then
             printf '%s' "${MEETREE_SIGNING_KEY}" > meetree-signing.key
             chmod 600 meetree-signing.key
@@ -39,16 +40,22 @@ jobs:
               sh -c 'chown -R www-data:www-data /var/www/html/custom_apps/meetree /tmp/meetree-signing.key && su -s /bin/sh www-data -c "php occ integrity:sign-app --privateKey=/tmp/meetree-signing.key --certificate=/var/www/html/custom_apps/meetree/appinfo/certificate.crt --path=/var/www/html/custom_apps/meetree"'
             rm -f meetree-signing.key "${archive}"
             tar -czf "${archive}" -C build meetree
+            printf '%s' "${MEETREE_SIGNING_KEY}" > meetree-signing.key
+            openssl dgst -sha512 -sign meetree-signing.key "${archive}" | openssl base64 -A > "${signature}"
+            rm -f meetree-signing.key
           fi
           test -f "${archive}"
           echo "version=${version}" >> "${GITHUB_OUTPUT}"
           echo "archive=${archive}" >> "${GITHUB_OUTPUT}"
+          echo "signature=${signature}" >> "${GITHUB_OUTPUT}"
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
           name: meetree-${{ steps.package.outputs.version }}
-          path: ${{ steps.package.outputs.archive }}
+          path: |
+            ${{ steps.package.outputs.archive }}
+            ${{ steps.package.outputs.signature }}
           if-no-files-found: error
 
       - name: Publish tagged GitHub release
@@ -57,11 +64,16 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG_NAME: ${{ github.ref_name }}
           ARCHIVE: ${{ steps.package.outputs.archive }}
+          SIGNATURE: ${{ steps.package.outputs.signature }}
           VERSION: ${{ steps.package.outputs.version }}
         run: |
           set -eu
+          assets="${ARCHIVE}"
+          if [ -f "${SIGNATURE}" ]; then
+            assets="${assets} ${SIGNATURE}"
+          fi
           if gh release view "${TAG_NAME}" >/dev/null 2>&1; then
-            gh release upload "${TAG_NAME}" "${ARCHIVE}" --clobber
+            gh release upload "${TAG_NAME}" ${assets} --clobber
           else
-            gh release create "${TAG_NAME}" "${ARCHIVE}" --title "MeeTree ${VERSION}" --notes "MeeTree ${VERSION} release package for Nextcloud."
+            gh release create "${TAG_NAME}" ${assets} --title "MeeTree ${VERSION}" --notes "MeeTree ${VERSION} release package for Nextcloud."
           fi

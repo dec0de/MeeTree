@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.10 - 2026-06-23
+
+### Added
+
+- Attach an App Store archive signature file to tagged GitHub releases when `MEETREE_SIGNING_KEY` is configured.
+
 ## 1.1.9 - 2026-06-23
 
 ### Added
