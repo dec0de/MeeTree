@@ -32,6 +32,8 @@ php occ app:enable meetree
 
 GitHub Actions builds `build/meetree-<version>.tar.gz` on pushes to `main` and manual workflow runs. Push a version tag such as `v1.1.8` to publish the archive as a GitHub Release asset for Nextcloud users.
 
+Tagged release archives are signed when the repository secret `MEETREE_SIGNING_KEY` contains the private key that matches `meetree/appinfo/certificate.crt`. Never commit the private key.
+
 ## Standalone Preview
 
 To preview the interface without Nextcloud, open `meetree/standalone/index.html` in a browser or serve the repository root locally:

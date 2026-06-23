@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.9 - 2026-06-23
+
+### Added
+
+- Add the public Nextcloud app signing certificate for MeeTree.
+- Sign tagged GitHub release archives when the `MEETREE_SIGNING_KEY` repository secret is configured.
+
 ## 1.1.8 - 2026-06-22
 
 ### Added

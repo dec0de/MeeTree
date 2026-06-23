@@ -16,7 +16,6 @@ tar \
   --exclude='build' \
   --exclude='*.key' \
   --exclude='*.csr' \
-  --exclude='*.crt' \
   -cf - "${APP_ID}" | tar -xf - -C "${BUILD_DIR}"
 
 cp README.md "${BUILD_DIR}/${APP_ID}/README.md"
