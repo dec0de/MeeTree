@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.13 - 2026-06-23
+
+### Added
+
+- Add an App Store screenshot to the app metadata.
+
 ## 1.1.12 - 2026-06-23
 
 ### Fixed
