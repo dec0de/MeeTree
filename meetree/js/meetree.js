@@ -361,7 +361,14 @@
         while (i < lines.length) {
             const line = lines[i];
             if (line.trim() === '') {
-                i++;
+                let blankCount = 0;
+                while (i < lines.length && lines[i].trim() === '') {
+                    blankCount++;
+                    i++;
+                }
+                for (let blankIndex = 1; blankIndex < blankCount && html.length > 0; blankIndex++) {
+                    html.push('<div class="meetree-markdown-spacer" aria-hidden="true"></div>');
+                }
                 continue;
             }
 
@@ -434,7 +441,7 @@
                 paragraph.push(lines[i].trim());
                 i++;
             }
-            html.push(`<p>${renderInlineMarkdown(paragraph.join(' '))}</p>`);
+            html.push(`<p>${renderInlineMarkdown(paragraph.join('\n')).replace(/\n/g, '<br>')}</p>`);
         }
 
         return html.join('\n');

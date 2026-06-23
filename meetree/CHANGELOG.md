@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.12 - 2026-06-23
+
+### Fixed
+
+- Restore Markdown preview line-break behavior and preserve repeated blank lines as visible spacing.
+
 ## 1.1.11 - 2026-06-23
 
 ### Added

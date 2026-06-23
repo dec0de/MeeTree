@@ -385,6 +385,10 @@
     margin: 0 0 0.85em;
 }
 
+.meetree-markdown-spacer {
+    height: 1.6em;
+}
+
 .meetree-markdown-preview ul,
 .meetree-markdown-preview ol {
     padding-left: 1.6em;
