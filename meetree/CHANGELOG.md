@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.22 - 2026-06-24
+
+### Changed
+
+- Preserve repeated blank lines as visible spacing in Markdown preview.
+- Use a monospace font for Markdown preview text.
+
 ## 1.1.21 - 2026-06-24
 
 ### Changed
