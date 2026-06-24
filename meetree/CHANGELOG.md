@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.18 - 2026-06-24
+
+### Changed
+
+- Show the MeeTree version in the standalone preview banner.
+
 ## 1.1.17 - 2026-06-24
 
 ### Fixed
