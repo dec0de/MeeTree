@@ -6,7 +6,7 @@
         return;
     }
 
-    const endpoint = app.dataset.endpoint;
+    const endpoint = app.dataset.endpoint || OC.generateUrl('/apps/meetree/document');
     const sidebarWidthStorageKey = 'meetree.sidebarWidth';
     const treeEl = document.getElementById('meetree-tree');
     const dividerEl = document.getElementById('meetree-divider');

@@ -9,14 +9,10 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IRequest;
-use OCP\IURLGenerator;
 use OCP\Util;
 
 class PageController extends Controller {
-    public function __construct(
-        IRequest $request,
-        private IURLGenerator $urlGenerator,
-    ) {
+    public function __construct(IRequest $request) {
         parent::__construct('meetree', $request);
     }
 
@@ -30,8 +26,6 @@ class PageController extends Controller {
         Util::addScript('meetree', 'meetree');
         Util::addStyle('meetree', 'meetree');
 
-        return new TemplateResponse('meetree', 'index', [
-            'endpoint' => $this->urlGenerator->linkToRoute('meetree.document.get'),
-        ]);
+        return new TemplateResponse('meetree', 'index');
     }
 }

@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.19 - 2026-06-24
+
+### Changed
+
+- Simplify the page controller to remove server-side URL generation from app startup.
+- Show the MeeTree version in the Nextcloud app header.
+
 ## 1.1.18 - 2026-06-24
 
 ### Changed

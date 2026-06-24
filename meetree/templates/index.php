@@ -1,10 +1,10 @@
 <?php
 /** @var array $_ */
 ?>
-<div id="meetree-app" data-endpoint="<?php p($_['endpoint']); ?>">
+<div id="meetree-app" data-version="1.1.19">
     <aside class="meetree-sidebar">
         <header class="meetree-header">
-            <h2>MeeTree</h2>
+            <h2>MeeTree <small>1.1.19</small></h2>
             <button type="button" id="meetree-open-toggle">File</button>
             <button type="button" id="meetree-export-toggle">Export</button>
             <button type="button" id="meetree-search-toggle">Search</button>
