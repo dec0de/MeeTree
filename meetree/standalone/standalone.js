@@ -116,8 +116,25 @@
         uiStateTimer = setTimeout(() => saveNow(), 5000);
     }
 
+    function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, char => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;',
+        })[char]);
+    }
+
+    function renderMarkdownPreview(markdown) {
+        if (window.TreeMarkdown && typeof window.TreeMarkdown.render === 'function') {
+            return window.TreeMarkdown.render(markdown);
+        }
+        return `<p>${escapeHtml(markdown || '')}</p>`;
+    }
+
     function updateMarkdownPreview() {
-        previewEl.innerHTML = window.TreeMarkdown.render(contentEl.value);
+        previewEl.innerHTML = renderMarkdownPreview(contentEl.value);
     }
 
     function setEditorMode(mode) {
