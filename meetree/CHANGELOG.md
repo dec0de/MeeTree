@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.17 - 2026-06-24
+
+### Fixed
+
+- Restore the app metadata layout and icon source from the last known clickable app release.
+
 ## 1.1.16 - 2026-06-24
 
 ### Fixed
