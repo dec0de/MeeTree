@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.23 - 2026-06-24
+
+### Changed
+
+- Restore visible bullets and numbers for Markdown lists in preview.
+
 ## 1.1.22 - 2026-06-24
 
 ### Changed
