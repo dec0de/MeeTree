@@ -2,13 +2,6 @@
 
 All notable changes to MeeTree are documented in this file.
 
-## 1.1.15 - 2026-06-24
-
-### Fixed
-
-- Restore reliable app startup by falling back safely if the Markdown renderer script is unavailable.
-- Reorder app metadata to match the Nextcloud appinfo schema.
-
 ## 1.1.14 - 2026-06-24
 
 ### Changed
