@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.24 - 2026-06-24
+
+### Changed
+
+- Preserve single line breaks in Markdown preview text.
+
 ## 1.1.23 - 2026-06-24
 
 ### Changed
