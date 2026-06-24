@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.25 - 2026-06-24
+
+### Changed
+
+- Add a small App Store screenshot thumbnail for app list previews in Nextcloud.
+
 ## 1.1.24 - 2026-06-24
 
 ### Changed
