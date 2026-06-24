@@ -2,13 +2,6 @@
 
 All notable changes to MeeTree are documented in this file.
 
-## 1.1.16 - 2026-06-24
-
-### Fixed
-
-- Restore app navigation startup by removing the new Markdown parser from the initial Nextcloud page load.
-- Restore the app icon source SVG to a dark foreground for reliable Nextcloud icon processing.
-
 ## 1.1.15 - 2026-06-24
 
 ### Fixed
