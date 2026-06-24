@@ -2,6 +2,13 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.14 - 2026-06-24
+
+### Changed
+
+- Use the shared TreeMarkdown renderer based on markdown-it so Markdown preview matches Nextcloud `.md` rendering more closely.
+- Align Markdown preview styling with NxTree for compatible tree content display.
+
 ## 1.1.13 - 2026-06-23
 
 ### Added

@@ -381,12 +381,13 @@
 .meetree-markdown-preview ul,
 .meetree-markdown-preview ol,
 .meetree-markdown-preview blockquote,
-.meetree-markdown-preview pre {
+.meetree-markdown-preview pre,
+.meetree-markdown-preview table {
     margin: 0 0 0.85em;
 }
 
-.meetree-markdown-spacer {
-    height: 1.6em;
+.meetree-markdown-preview li + li {
+    margin-top: 0.25em;
 }
 
 .meetree-markdown-preview ul,
@@ -419,6 +420,28 @@
 .meetree-markdown-preview pre code {
     padding: 0;
     background: transparent;
+}
+
+.meetree-markdown-preview table {
+    display: block;
+    max-width: 100%;
+    overflow: auto;
+    border-collapse: collapse;
+}
+
+.meetree-markdown-preview th,
+.meetree-markdown-preview td {
+    padding: 0.4em 0.65em;
+    border: 1px solid var(--color-border);
+}
+
+.meetree-markdown-preview th {
+    background: var(--color-background-hover);
+    font-weight: 600;
+}
+
+.meetree-markdown-preview .task-list-item {
+    list-style: none;
 }
 
 .meetree-markdown-preview input[type="checkbox"] {
