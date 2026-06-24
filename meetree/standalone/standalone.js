@@ -3,7 +3,7 @@
 
     const storageKey = 'meetree.standalone.document';
     const sidebarWidthStorageKey = 'meetree.sidebarWidth';
-    const appVersion = '1.1.20';
+    const appVersion = '1.1.21';
     const endMarker = '<end node> 5P9i0s8y19Z';
     const app = document.getElementById('meetree-app');
     const treeEl = document.getElementById('meetree-tree');
