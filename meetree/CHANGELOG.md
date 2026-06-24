@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.20 - 2026-06-24
+
+### Changed
+
+- Make the standalone preview version visible in the page title, banner, app header, and status line.
+
 ## 1.1.19 - 2026-06-24
 
 ### Changed

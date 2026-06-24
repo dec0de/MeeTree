@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MeeTree Standalone Preview</title>
+    <title>MeeTree Standalone 1.1.20</title>
     <link rel="stylesheet" href="../css/meetree.css">
     <style>
         :root {
@@ -53,25 +53,39 @@
         }
 
         .meetree-standalone-banner {
-            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 12px;
             border-bottom: 1px solid var(--color-border);
             background: #0f766e;
             color: #ecfeff;
+            font-weight: 700;
+        }
+
+        .meetree-standalone-version {
+            padding: 3px 8px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.16);
+            white-space: nowrap;
         }
 
         #meetree-app {
-            height: calc(100vh - 35px);
+            height: calc(100vh - 43px);
         }
     </style>
 </head>
 <body>
     <div class="meetree-standalone-banner">
-        Standalone MeeTree preview, version 1.1.19. Data is saved in this browser's localStorage, not Nextcloud.
+        <span>Standalone MeeTree preview. Data is saved in this browser's localStorage, not Nextcloud.</span>
+        <span class="meetree-standalone-version">Version 1.1.20</span>
     </div>
     <div id="meetree-app">
         <aside class="meetree-sidebar">
             <header class="meetree-header">
-                <h2>MeeTree</h2>
+                <h2>MeeTree <small>Standalone 1.1.20</small></h2>
                 <button type="button" id="meetree-open-toggle">File</button>
                 <button type="button" id="meetree-export-toggle">Export</button>
                 <button type="button" id="meetree-search-toggle">Search</button>
@@ -110,7 +124,7 @@
             </div>
             <textarea id="meetree-node-content" spellcheck="true" placeholder="Write Markdown content here"></textarea>
             <article id="meetree-node-preview" class="meetree-markdown-preview" hidden></article>
-            <p id="meetree-status" role="status"></p>
+            <p id="meetree-status" role="status">MeeTree Standalone 1.1.20 loaded</p>
         </main>
         <section id="meetree-search-panel" class="meetree-search-panel" hidden>
             <header class="meetree-search-panel-header">

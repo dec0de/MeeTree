@@ -1,10 +1,10 @@
 <?php
 /** @var array $_ */
 ?>
-<div id="meetree-app" data-version="1.1.19">
+<div id="meetree-app" data-version="1.1.20">
     <aside class="meetree-sidebar">
         <header class="meetree-header">
-            <h2>MeeTree <small>1.1.19</small></h2>
+            <h2>MeeTree <small>1.1.20</small></h2>
             <button type="button" id="meetree-open-toggle">File</button>
             <button type="button" id="meetree-export-toggle">Export</button>
             <button type="button" id="meetree-search-toggle">Search</button>
