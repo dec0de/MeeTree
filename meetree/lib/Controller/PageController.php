@@ -27,6 +27,8 @@ class PageController extends Controller {
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
 	public function index(): TemplateResponse {
+        Util::addScript('meetree', 'markdown-it.min');
+        Util::addScript('meetree', 'tree-markdown');
         Util::addScript('meetree', 'meetree');
         Util::addStyle('meetree', 'meetree');
 
