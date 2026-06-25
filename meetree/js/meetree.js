@@ -26,6 +26,10 @@
     const searchPanel = document.getElementById('meetree-search-panel');
     const searchPanelHeader = searchPanel.querySelector('.meetree-search-panel-header');
     const searchInput = document.getElementById('meetree-search-input');
+    const replaceInput = document.getElementById('meetree-replace-input');
+    const replaceSelectedButton = document.getElementById('meetree-replace-selected');
+    const replaceAllButton = document.getElementById('meetree-replace-all');
+    const searchStatus = document.getElementById('meetree-search-status');
     const searchResults = document.getElementById('meetree-search-results');
     let documentData = null;
     let selectedId = null;
@@ -38,6 +42,7 @@
     let saveQueued = false;
     let currentFileBrowserPath = '/';
     let editorMode = 'preview';
+    let activeSearchResultId = null;
     const undoStack = [];
     const collapsedIds = new Set();
 
@@ -933,6 +938,123 @@
         }
     }
 
+    function escapeRegExp(value) {
+        return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function replacementPattern(query, options) {
+        if (!query) {
+            return null;
+        }
+        try {
+            return new RegExp(options.regex ? query : escapeRegExp(query), options.caseSensitive ? 'g' : 'gi');
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function replacePlainValue(value, pattern, replacement) {
+        const source = String(value || '');
+        let count = 0;
+        const next = source.replace(pattern, () => {
+            count += 1;
+            return replacement;
+        });
+        return { value: next, count };
+    }
+
+    function replaceRegexValue(value, pattern, replacement) {
+        const source = String(value || '');
+        const matches = source.match(pattern);
+        return { value: source.replace(pattern, replacement), count: matches ? matches.length : 0 };
+    }
+
+    function searchOptions() {
+        return {
+            titles: document.getElementById('meetree-search-title').checked,
+            content: document.getElementById('meetree-search-content').checked,
+            caseSensitive: document.getElementById('meetree-search-case').checked,
+            regex: document.getElementById('meetree-search-regex').checked,
+        };
+    }
+
+    function selectedSearchRoot() {
+        const info = selectedInfo();
+        return info ? info.node : documentData.root;
+    }
+
+    function collectSubtreeNodes(node, nodes = []) {
+        if (!node) {
+            return nodes;
+        }
+        nodes.push(node);
+        (node.children || []).forEach(child => collectSubtreeNodes(child, nodes));
+        return nodes;
+    }
+
+    function replaceInNode(node, pattern, replacement, options) {
+        let replacements = 0;
+        if (options.titles) {
+            const result = options.regex ? replaceRegexValue(node.title || '', pattern, replacement) : replacePlainValue(node.title || '', pattern, replacement);
+            node.title = result.value;
+            replacements += result.count;
+        }
+        if (options.content) {
+            const result = options.regex ? replaceRegexValue(node.content || '', pattern, replacement) : replacePlainValue(node.content || '', pattern, replacement);
+            node.content = result.value;
+            replacements += result.count;
+        }
+        return replacements;
+    }
+
+    function applyReplacement(targetNodes) {
+        syncEditorToNode();
+        const query = searchInput.value.trim();
+        const options = searchOptions();
+        const pattern = replacementPattern(query, options);
+        if (!query) {
+            searchStatus.textContent = 'Enter search text before replacing.';
+            return;
+        }
+        if (!pattern) {
+            searchStatus.textContent = 'Invalid regular expression.';
+            return;
+        }
+        if (!options.titles && !options.content) {
+            searchStatus.textContent = 'Choose titles, content, or both.';
+            return;
+        }
+
+        let replacements = 0;
+        const changedNodes = [];
+        const replacement = replaceInput.value;
+        pushUndoState();
+        targetNodes.forEach(node => {
+            const beforeTitle = node.title || '';
+            const beforeContent = node.content || '';
+            const count = replaceInNode(node, pattern, replacement, options);
+            if (count > 0) {
+                replacements += count;
+                changedNodes.push(node);
+            }
+            if (count === 0) {
+                node.title = beforeTitle;
+                node.content = beforeContent;
+            }
+        });
+        if (replacements === 0) {
+            undoStack.pop();
+            searchStatus.textContent = 'No matches to replace.';
+            return;
+        }
+
+        renderTree();
+        selectNode(findNode(selectedId) ? selectedId : documentData.root.id, false);
+        markDirty(true);
+        runSearch();
+        searchStatus.textContent = `Replaced ${replacements} occurrence(s) in ${changedNodes.length} node(s). Undo is available.`;
+    }
+
     function searchNode(node, path, query, options, results) {
         const nodePath = path.concat(node.title || 'Untitled');
         const matches = [];
@@ -953,27 +1075,39 @@
         const query = searchInput.value.trim();
         const data = { results: [] };
         if (query) {
-            searchNode(documentData.root, [], query, {
-                titles: document.getElementById('meetree-search-title').checked,
-                content: document.getElementById('meetree-search-content').checked,
-                caseSensitive: document.getElementById('meetree-search-case').checked,
-                regex: document.getElementById('meetree-search-regex').checked,
-            }, data.results);
+            const root = selectedSearchRoot();
+            searchNode(root, [], query, searchOptions(), data.results);
         }
         searchResults.textContent = '';
+        activeSearchResultId = null;
         data.results.forEach(result => {
             const button = document.createElement('button');
             button.type = 'button';
             button.className = 'meetree-search-result';
             button.textContent = `${result.path} (${result.matches.join(', ')})`;
-            button.addEventListener('click', () => selectNode(result.id));
+            button.addEventListener('click', () => {
+                activeSearchResultId = result.id;
+                selectNode(result.id);
+            });
             searchResults.appendChild(button);
         });
+        searchStatus.textContent = query ? `${data.results.length} matching node(s). Scope: selected node and children.` : 'Scope: selected node and children.';
     }
 
     searchInput.addEventListener('input', runSearch);
     ['meetree-search-title', 'meetree-search-content', 'meetree-search-case', 'meetree-search-regex'].forEach(id => {
         document.getElementById(id).addEventListener('change', runSearch);
+    });
+    replaceSelectedButton.addEventListener('click', () => {
+        const target = activeSearchResultId ? findNode(activeSearchResultId) : selectedInfo();
+        if (!target) {
+            searchStatus.textContent = 'Select a search result or node first.';
+            return;
+        }
+        applyReplacement([target.node]);
+    });
+    replaceAllButton.addEventListener('click', () => {
+        applyReplacement(collectSubtreeNodes(selectedSearchRoot()));
     });
 
     window.addEventListener('beforeunload', event => {

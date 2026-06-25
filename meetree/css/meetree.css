@@ -164,6 +164,24 @@
     white-space: nowrap;
 }
 
+.meetree-search-replace {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+#meetree-replace-input {
+    flex: 1;
+    min-width: 180px;
+}
+
+.meetree-search-status {
+    min-height: 20px;
+    margin: 0;
+    color: var(--color-text-maxcontrast);
+}
+
 .meetree-search-results {
     min-height: 120px;
     max-height: 100%;

@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.26 - 2026-06-24
+
+### Changed
+
+- Add scoped search and replace for the selected node and its children, with undo support.
+
 ## 1.1.25 - 2026-06-24
 
 ### Changed

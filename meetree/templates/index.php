@@ -59,6 +59,12 @@
                 <label><input id="meetree-search-case" type="checkbox" /> Match case</label>
                 <label><input id="meetree-search-regex" type="checkbox" /> Regex</label>
             </div>
+            <div class="meetree-search-replace">
+                <input id="meetree-replace-input" type="text" placeholder="Replace with" />
+                <button type="button" id="meetree-replace-selected">Replace selected</button>
+                <button type="button" id="meetree-replace-all">Replace all below</button>
+            </div>
+            <p id="meetree-search-status" class="meetree-search-status">Scope: selected node and children.</p>
             <div id="meetree-search-results" class="meetree-search-results"></div>
         </div>
     </section>
