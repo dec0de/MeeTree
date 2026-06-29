@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.29 - 2026-06-29
+
+### Changed
+
+- Shorten the subtree search option label to keep search options on one line.
+
 ## 1.1.28 - 2026-06-29
 
 ### Changed

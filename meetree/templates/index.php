@@ -58,7 +58,7 @@
                 <label><input id="meetree-search-content" type="checkbox" checked /> Content</label>
                 <label><input id="meetree-search-case" type="checkbox" /> Match case</label>
                 <label><input id="meetree-search-regex" type="checkbox" /> Regex</label>
-                <label><input id="meetree-search-branch" type="checkbox" /> Search subtree only</label>
+                <label><input id="meetree-search-branch" type="checkbox" /> Subtree only</label>
             </div>
             <div class="meetree-search-replace">
                 <input id="meetree-replace-input" type="text" placeholder="Replace with" />
