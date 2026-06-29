@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.28 - 2026-06-29
+
+### Changed
+
+- Clarify the search scope option label in the search panel.
+
 ## 1.1.27 - 2026-06-29
 
 ### Changed
