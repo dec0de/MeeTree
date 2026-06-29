@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.27 - 2026-06-29
+
+### Changed
+
+- Search and replace the whole tree by default, with an option to limit scope to the current branch.
+
 ## 1.1.26 - 2026-06-24
 
 ### Changed

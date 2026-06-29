@@ -26,6 +26,7 @@
     const searchPanel = document.getElementById('meetree-search-panel');
     const searchPanelHeader = searchPanel.querySelector('.meetree-search-panel-header');
     const searchInput = document.getElementById('meetree-search-input');
+    const searchBranch = document.getElementById('meetree-search-branch');
     const replaceInput = document.getElementById('meetree-replace-input');
     const replaceSelectedButton = document.getElementById('meetree-replace-selected');
     const replaceAllButton = document.getElementById('meetree-replace-all');
@@ -980,7 +981,11 @@
 
     function selectedSearchRoot() {
         const info = selectedInfo();
-        return info ? info.node : documentData.root;
+        return searchBranch.checked && info ? info.node : documentData.root;
+    }
+
+    function searchScopeLabel() {
+        return searchBranch.checked ? 'selected node and children' : 'whole tree';
     }
 
     function collectSubtreeNodes(node, nodes = []) {
@@ -1091,11 +1096,11 @@
             });
             searchResults.appendChild(button);
         });
-        searchStatus.textContent = query ? `${data.results.length} matching node(s). Scope: selected node and children.` : 'Scope: selected node and children.';
+        searchStatus.textContent = query ? `${data.results.length} matching node(s). Scope: ${searchScopeLabel()}.` : `Scope: ${searchScopeLabel()}.`;
     }
 
     searchInput.addEventListener('input', runSearch);
-    ['meetree-search-title', 'meetree-search-content', 'meetree-search-case', 'meetree-search-regex'].forEach(id => {
+    ['meetree-search-title', 'meetree-search-content', 'meetree-search-case', 'meetree-search-regex', 'meetree-search-branch'].forEach(id => {
         document.getElementById(id).addEventListener('change', runSearch);
     });
     replaceSelectedButton.addEventListener('click', () => {
