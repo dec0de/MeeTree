@@ -2,6 +2,12 @@
 
 All notable changes to MeeTree are documented in this file.
 
+## 1.1.30 - 2026-07-01
+
+### Changed
+
+- Use the App Store thumbnail as the first screenshot so Nextcloud's integrated Apps UI displays a card-friendly image.
+
 ## 1.1.29 - 2026-06-29
 
 ### Changed
